@@ -55,6 +55,11 @@ public class MotoController {
         return ResponseEntity.ok(motoService.atualizarPorPlaca(placa, dto));
     }
 
+    @PostMapping("/visao-computacional")
+    public ResponseEntity<Moto> atualizarPorVisao(@RequestBody @Valid MotoDTO dto) {
+        return ResponseEntity.ok(motoService.atualizarPorPlaca(dto.getPlaca(), dto));
+    }
+
     @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deletarPorId(@PathVariable Long id) {
         motoService.deletar(id);

@@ -44,7 +44,7 @@ public class MotoService {
     public Moto salvar(MotoDTO dto) {
         Patio patio = patioRepository.findById(dto.getPatioId())
                 .orElseThrow(() -> new EntityNotFoundException("Pátio não encontrado"));
-        Moto moto = new Moto(null, dto.getModelo(), dto.getPlaca(), dto.getStatus(), patio);
+        Moto moto = new Moto(null, dto.getModelo(), dto.getPlaca(), dto.getStatus(), dto.getCoordenadaGps(), dto.getDataUltimaManutencao(), dto.getDescricaoProblema(), patio);
         return motoRepository.save(moto);
     }
 
@@ -56,6 +56,9 @@ public class MotoService {
         moto.setModelo(dto.getModelo());
         moto.setPlaca(dto.getPlaca());
         moto.setStatus(dto.getStatus());
+        moto.setCoordenadaGps(dto.getCoordenadaGps());
+        moto.setDataUltimaManutencao(dto.getDataUltimaManutencao());
+        moto.setDescricaoProblema(dto.getDescricaoProblema());
         moto.setPatio(patio);
         return motoRepository.save(moto);
     }
@@ -66,8 +69,11 @@ public class MotoService {
                 .orElseThrow(() -> new EntityNotFoundException("Pátio não encontrado"));
 
         moto.setModelo(dto.getModelo());
-        moto.setStatus(dto.getStatus());
         moto.setPlaca(dto.getPlaca());
+        moto.setStatus(dto.getStatus());
+        moto.setCoordenadaGps(dto.getCoordenadaGps());
+        moto.setDataUltimaManutencao(dto.getDataUltimaManutencao());
+        moto.setDescricaoProblema(dto.getDescricaoProblema());
         moto.setPatio(patio);
         return motoRepository.save(moto);
     }

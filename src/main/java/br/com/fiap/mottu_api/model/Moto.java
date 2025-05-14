@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -23,6 +25,12 @@ public class Moto {
 
     @Enumerated(EnumType.STRING)
     private StatusMoto status;
+
+    private String coordenadaGps;
+
+    private LocalDate dataUltimaManutencao;
+
+    private String descricaoProblema;
 
     @ManyToOne
     private Patio patio;
