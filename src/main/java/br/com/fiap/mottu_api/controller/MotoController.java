@@ -5,7 +5,6 @@ import br.com.fiap.mottu_api.model.Moto;
 import br.com.fiap.mottu_api.model.StatusMoto;
 import br.com.fiap.mottu_api.service.MotoService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +14,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/motos")
-@RequiredArgsConstructor
 public class MotoController {
 
     private final MotoService motoService;
+
+    public MotoController(MotoService motoService) {
+        this.motoService = motoService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<Moto>> listar(@RequestParam StatusMoto status, Pageable pageable) {
@@ -40,9 +42,17 @@ public class MotoController {
         return ResponseEntity.ok(motoService.buscarPorStatus(status));
     }
 
+    @GetMapping("/filtro")
+    public ResponseEntity<List<Moto>> filtrarPorStatusSetorCor(
+            @RequestParam(required = false) StatusMoto status,
+            @RequestParam(required = false) String setor,
+            @RequestParam(required = false) String cor) {
+        return ResponseEntity.ok(motoService.filtrarPorStatusSetorCor(status, setor, cor));
+    }
+
     @PostMapping
     public ResponseEntity<Moto> salvar(@RequestBody @Valid MotoDTO dto) {
-        return ResponseEntity.ok(motoService.salvar(dto));
+        return ResponseEntity.status(201).body(motoService.salvar(dto));
     }
 
     @PutMapping("/id/{id}")
@@ -53,11 +63,6 @@ public class MotoController {
     @PutMapping("/placa/{placa}")
     public ResponseEntity<Moto> atualizarPorPlaca(@PathVariable String placa, @RequestBody @Valid MotoDTO dto) {
         return ResponseEntity.ok(motoService.atualizarPorPlaca(placa, dto));
-    }
-
-    @PostMapping("/visao-computacional")
-    public ResponseEntity<Moto> atualizarPorVisao(@RequestBody @Valid MotoDTO dto) {
-        return ResponseEntity.ok(motoService.atualizarPorPlaca(dto.getPlaca(), dto));
     }
 
     @DeleteMapping("/id/{id}")

@@ -1,31 +1,26 @@
 package br.com.fiap.mottu_api.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 
-
-import java.util.List;
 
 @Entity
-
-public class Patio {
+public class UsuarioPatio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String nome;
+    private String email;
+    private String funcao;
 
-    @OneToMany(mappedBy = "patio")
-    private List<Moto> motos;
-
-    public Patio(Long id, String nome, List<Moto> motos) {
+    public UsuarioPatio(Long id, String nome, String email, String funcao) {
         this.id = id;
         this.nome = nome;
-        this.motos = motos;
+        this.email = email;
+        this.funcao = funcao;
     }
 
-    public Patio() {
+    public UsuarioPatio() {
     }
 
     public Long getId() {
@@ -44,20 +39,30 @@ public class Patio {
         this.nome = nome;
     }
 
-    public List<Moto> getMotos() {
-        return motos;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMotos(List<Moto> motos) {
-        this.motos = motos;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFuncao() {
+        return funcao;
+    }
+
+    public void setFuncao(String funcao) {
+        this.funcao = funcao;
     }
 
     @Override
     public String toString() {
-        return "Patio{" +
+        return "UsuarioPatio{" +
                 "id=" + id +
                 ", nome='" + nome + '\'' +
-                ", motos=" + motos +
+                ", email='" + email + '\'' +
+                ", funcao='" + funcao + '\'' +
                 '}';
     }
 }
+

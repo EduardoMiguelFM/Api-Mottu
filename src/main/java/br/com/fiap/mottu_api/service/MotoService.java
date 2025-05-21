@@ -7,20 +7,24 @@ import br.com.fiap.mottu_api.model.StatusMoto;
 import br.com.fiap.mottu_api.repository.MotoRepository;
 import br.com.fiap.mottu_api.repository.PatioRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
-@RequiredArgsConstructor
 public class MotoService {
 
     private final MotoRepository motoRepository;
     private final PatioRepository patioRepository;
+
+    public MotoService(MotoRepository motoRepository, PatioRepository patioRepository) {
+        this.motoRepository = motoRepository;
+        this.patioRepository = patioRepository;
+    }
 
     @Cacheable("motos")
     public Page<Moto> listar(StatusMoto status, Pageable pageable) {
@@ -41,10 +45,53 @@ public class MotoService {
                 .orElseThrow(() -> new EntityNotFoundException("Moto não encontrada por placa"));
     }
 
+    private String gerarCoordenadaGpsSimulada() {
+        double baseLat = -23.5505;
+        double baseLng = -46.6333;
+        Random random = new Random();
+        double offsetLat = (random.nextDouble() - 0.5) / 1000;
+        double offsetLng = (random.nextDouble() - 0.5) / 1000;
+        return String.format("%.6f, %.6f", baseLat + offsetLat, baseLng + offsetLng);
+    }
+
+    private String definirSetorPorStatus(StatusMoto status) {
+        return switch (status) {
+            case DISPONIVEL -> "Setor A";
+            case RESERVADA -> "Setor B";
+            case MANUTENCAO, FALTA_PECA -> "Setor C";
+            case INDISPONIVEL, DANOS_ESTRUTURAIS -> "Setor D";
+            case SINISTRO -> "Setor E";
+        };
+    }
+
+    private String definirCorPorStatus(StatusMoto status) {
+        return switch (status) {
+            case DISPONIVEL -> "Verde";
+            case RESERVADA -> "Azul";
+            case MANUTENCAO -> "Amarelo";
+            case FALTA_PECA -> "Laranja";
+            case INDISPONIVEL, DANOS_ESTRUTURAIS -> "Vermelho";
+            case SINISTRO -> "Preto";
+        };
+    }
+
+    public List<Moto> filtrarPorStatusSetorCor(StatusMoto status, String setor, String cor) {
+        return motoRepository.findAll().stream()
+                .filter(m -> (status == null || m.getStatus() == status))
+                .filter(m -> (setor == null || m.getSetor().equalsIgnoreCase(setor)))
+                .filter(m -> (cor == null || m.getCorSetor().equalsIgnoreCase(cor)))
+                .toList();
+    }
+
     public Moto salvar(MotoDTO dto) {
         Patio patio = patioRepository.findById(dto.getPatioId())
                 .orElseThrow(() -> new EntityNotFoundException("Pátio não encontrado"));
-        Moto moto = new Moto(null, dto.getModelo(), dto.getPlaca(), dto.getStatus(), dto.getCoordenadaGps(), dto.getDataUltimaManutencao(), dto.getDescricaoProblema(), patio);
+
+        String gps = (dto.getCoordenadaGps() == null || dto.getCoordenadaGps().isBlank())
+                ? gerarCoordenadaGpsSimulada() : dto.getCoordenadaGps();
+
+        Moto moto = new Moto(null, dto.getModelo(), dto.getPlaca(), dto.getStatus(), gps,
+                definirSetorPorStatus(dto.getStatus()), definirCorPorStatus(dto.getStatus()), patio);
         return motoRepository.save(moto);
     }
 
@@ -56,9 +103,10 @@ public class MotoService {
         moto.setModelo(dto.getModelo());
         moto.setPlaca(dto.getPlaca());
         moto.setStatus(dto.getStatus());
-        moto.setCoordenadaGps(dto.getCoordenadaGps());
-        moto.setDataUltimaManutencao(dto.getDataUltimaManutencao());
-        moto.setDescricaoProblema(dto.getDescricaoProblema());
+        moto.setCoordenadaGps((dto.getCoordenadaGps() == null || dto.getCoordenadaGps().isBlank())
+                ? gerarCoordenadaGpsSimulada() : dto.getCoordenadaGps());
+        moto.setSetor(definirSetorPorStatus(dto.getStatus()));
+        moto.setCorSetor(definirCorPorStatus(dto.getStatus()));
         moto.setPatio(patio);
         return motoRepository.save(moto);
     }
@@ -71,9 +119,10 @@ public class MotoService {
         moto.setModelo(dto.getModelo());
         moto.setPlaca(dto.getPlaca());
         moto.setStatus(dto.getStatus());
-        moto.setCoordenadaGps(dto.getCoordenadaGps());
-        moto.setDataUltimaManutencao(dto.getDataUltimaManutencao());
-        moto.setDescricaoProblema(dto.getDescricaoProblema());
+        moto.setCoordenadaGps((dto.getCoordenadaGps() == null || dto.getCoordenadaGps().isBlank())
+                ? gerarCoordenadaGpsSimulada() : dto.getCoordenadaGps());
+        moto.setSetor(definirSetorPorStatus(dto.getStatus()));
+        moto.setCorSetor(definirCorPorStatus(dto.getStatus()));
         moto.setPatio(patio);
         return motoRepository.save(moto);
     }

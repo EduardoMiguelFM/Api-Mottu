@@ -1,37 +1,131 @@
+
 package br.com.fiap.mottu_api.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-
-import java.time.LocalDate;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Moto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(min = 3, max = 50)
+    @NotBlank(message = "Modelo é obrigatório")
+    @Size(min = 2, max = 100, message = "O Modelo da moto deve ter entre 2 e 100 caracteres")
     private String modelo;
 
-    @NotBlank
+    @NotBlank(message = "Placa é obrigatória")
+    @Size(min = 7, max = 7, message = "Placa deve ter exatamente 7 caracteres")
     private String placa;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Status é obrigatório")
     private StatusMoto status;
 
     private String coordenadaGps;
 
-    private LocalDate dataUltimaManutencao;
+    @NotBlank(message = "Setor é obrigatório")
+    private String setor;
 
-    private String descricaoProblema;
+
+    @NotBlank(message = "Cor do setor é obrigatória")
+    private String corSetor;
+
 
     @ManyToOne
     private Patio patio;
+
+
+    public Moto(Long id, String modelo, String placa, StatusMoto status, String coordenadaGps, String setor, String corSetor, Patio patio) {
+        this.id = id;
+        this.modelo = modelo;
+        this.placa = placa;
+        this.status = status;
+        this.coordenadaGps = coordenadaGps;
+        this.setor = setor;
+        this.corSetor = corSetor;
+        this.patio = patio;
+    }
+
+    public Moto() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public StatusMoto getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusMoto status) {
+        this.status = status;
+    }
+
+    public String getCoordenadaGps() {
+        return coordenadaGps;
+    }
+
+    public void setCoordenadaGps(String coordenadaGps) {
+        this.coordenadaGps = coordenadaGps;
+    }
+
+    public String getSetor() {
+        return setor;
+    }
+
+    public void setSetor(String setor) {
+        this.setor = setor;
+    }
+
+    public String getCorSetor() {
+        return corSetor;
+    }
+
+    public void setCorSetor(String corSetor) {
+        this.corSetor = corSetor;
+    }
+
+    public Patio getPatio() {
+        return patio;
+    }
+
+    public void setPatio(Patio patio) {
+        this.patio = patio;
+    }
+
+    @Override
+    public String toString() {
+        return "Moto{" +
+                "id=" + id +
+                ", modelo='" + modelo + '\'' +
+                ", placa='" + placa + '\'' +
+                ", status=" + status +
+                ", coordenadaGps='" + coordenadaGps + '\'' +
+                ", setor='" + setor + '\'' +
+                ", corSetor='" + corSetor + '\'' +
+                ", patio=" + patio +
+                '}';
+    }
 }
