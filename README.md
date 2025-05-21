@@ -24,13 +24,13 @@ API RESTful construída com **Spring Boot** para **gestão de motos, pátios e u
 
 ## 🧪 Tecnologias Utilizadas
 
-- Java 21 (compatível com Spring Boot 3.4.5)
-- Spring Boot 3.4.5
+- Java 21 (compatível com Spring Boot 3.2.5)
+- Spring Boot 3.2.5
 - Spring Web
 - Spring Data JPA
 - Spring Validation (Jakarta)
 - H2 Database
-- Swagger OpenAPI 3 (`springdoc-openapi-starter-webmvc-ui`)
+- Swagger OpenAPI 3 (`springdoc-openapi-starter-webmvc-ui:2.5.0`)
 - Spring Cache (com HikariCP)
 - Gradle como gerenciador de build
 
