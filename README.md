@@ -10,15 +10,15 @@ API RESTful construída com **Spring Boot** para **gestão de motos, pátios e u
 
 - ✅ Cadastro e gerenciamento de **motos**
 - ✅ Cadastro e gerenciamento de **pátios**
-- ✅ Cadastro de **usuários de pátio**
+- ✅ Cadastro e **autenticação de usuários de pátio**
 - ✅ Relacionamento entre entidades (Moto ↔ Pátio)
 - 🔍 Filtros por **status**, **setor** e **cor**
 - 🛠 Atualização e remoção por **ID ou placa**
-- 🧭 Campos adicionais como:
+- 🧭 Campos adicionais gerados automaticamente:
   - Status operacional (`enum`)
   - Coordenada GPS simulada
-  - Setor atribuído dinamicamente
-  - Cor vinculada ao status
+  - Setor (A-G)
+  - Cor (baseado no status)
 
 ---
 
@@ -63,8 +63,7 @@ br.com.fiap.mottu_api
 
 ## 📌 Exemplos de Endpoints
 
-## 🔄 Moto
-
+##🔄 Moto
 GET /api/motos/id/{id}
 
 GET /api/motos/placa/{placa}
@@ -80,16 +79,16 @@ PUT /api/motos/id/{id}
 DELETE /api/motos/placa/{placa}
 
 ## 🏢 Pátio
-
 GET /api/patios
 
 POST /api/patios
 
 ## 👷 Usuário de Pátio
-
 GET /api/usuarios
 
-POST /api/usuarios
+POST /api/usuarios/cadastro
+
+POST /api/usuarios/login?email=&senha=
 
 GET /api/usuarios/{id}
 
