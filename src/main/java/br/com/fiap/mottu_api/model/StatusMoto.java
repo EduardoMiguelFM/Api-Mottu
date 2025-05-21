@@ -20,4 +20,15 @@ public enum StatusMoto {
             case SINISTRO -> "Preto";
         };
     }
+    private String definirSetorPorStatus(StatusMoto status) {
+        return switch (status) {
+            case DISPONIVEL -> "Setor A";
+            case RESERVADA -> "Setor B";
+            case MANUTENCAO -> "Setor C";
+            case FALTA_PECA -> "Setor D";
+            case INDISPONIVEL -> "Setor E";
+            case DANOS_ESTRUTURAIS -> "Setor F";
+            case SINISTRO -> "Setor G";
+        };
+    }
 }

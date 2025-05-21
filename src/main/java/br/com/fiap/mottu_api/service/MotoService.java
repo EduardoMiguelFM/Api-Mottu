@@ -58,9 +58,11 @@ public class MotoService {
         return switch (status) {
             case DISPONIVEL -> "Setor A";
             case RESERVADA -> "Setor B";
-            case MANUTENCAO, FALTA_PECA -> "Setor C";
-            case INDISPONIVEL, DANOS_ESTRUTURAIS -> "Setor D";
-            case SINISTRO -> "Setor E";
+            case MANUTENCAO -> "Setor C";
+            case FALTA_PECA -> "Setor D";
+            case INDISPONIVEL -> "Setor E";
+            case DANOS_ESTRUTURAIS -> "Setor F";
+            case SINISTRO -> "Setor G";
         };
     }
 
@@ -70,7 +72,8 @@ public class MotoService {
             case RESERVADA -> "Azul";
             case MANUTENCAO -> "Amarelo";
             case FALTA_PECA -> "Laranja";
-            case INDISPONIVEL, DANOS_ESTRUTURAIS -> "Vermelho";
+            case INDISPONIVEL -> "Cinza";
+            case DANOS_ESTRUTURAIS -> "Vermelho";
             case SINISTRO -> "Preto";
         };
     }
