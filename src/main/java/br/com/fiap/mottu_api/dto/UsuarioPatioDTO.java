@@ -1,27 +1,21 @@
 package br.com.fiap.mottu_api.dto;
 
 public class UsuarioPatioDTO {
-
-    private Long id;
     private String nome;
-    private String email;
+    private String cpf;
     private String funcao;
+    private String email;
+    private String senha;
 
-    public UsuarioPatioDTO() {}
+    public UsuarioPatioDTO() {
+    }
 
-    public UsuarioPatioDTO(Long id, String nome, String email, String funcao) {
-        this.id = id;
+    public UsuarioPatioDTO(String nome, String cpf, String funcao, String email, String senha) {
         this.nome = nome;
-        this.email = email;
+        this.cpf = cpf;
         this.funcao = funcao;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        this.email = email;
+        this.senha = senha;
     }
 
     public String getNome() {
@@ -32,12 +26,12 @@ public class UsuarioPatioDTO {
         this.nome = nome;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getFuncao() {
@@ -48,13 +42,19 @@ public class UsuarioPatioDTO {
         this.funcao = funcao;
     }
 
-    @Override
-    public String toString() {
-        return "UsuarioPatioDTO{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", email='" + email + '\'' +
-                ", funcao='" + funcao + '\'' +
-                '}';
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 }

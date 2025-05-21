@@ -1,6 +1,9 @@
 package br.com.fiap.mottu_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
+import java.util.List;
 
 
 @Entity
@@ -9,18 +12,31 @@ public class UsuarioPatio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String nome;
-    private String email;
+
+    @NotBlank
+    private String cpf;
+
+    @NotBlank
     private String funcao;
 
-    public UsuarioPatio(Long id, String nome, String email, String funcao) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.funcao = funcao;
-    }
+    @NotBlank
+    private String email;
+    @NotBlank
+    private String senha;
+
 
     public UsuarioPatio() {
+    }
+
+    public UsuarioPatio(Long id, String nome, String cpf, String funcao, String email, String senha, List<Moto> motos) {
+        this.id = id;
+        this.nome = nome;
+        this.cpf = cpf;
+        this.funcao = funcao;
+        this.email = email;
+        this.senha = senha;
     }
 
     public Long getId() {
@@ -39,12 +55,12 @@ public class UsuarioPatio {
         this.nome = nome;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getFuncao() {
@@ -55,14 +71,21 @@ public class UsuarioPatio {
         this.funcao = funcao;
     }
 
-    @Override
-    public String toString() {
-        return "UsuarioPatio{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", email='" + email + '\'' +
-                ", funcao='" + funcao + '\'' +
-                '}';
+    public String getEmail() {
+        return email;
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
 }
 

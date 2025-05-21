@@ -1,5 +1,6 @@
 package br.com.fiap.mottu_api.controller;
 
+import br.com.fiap.mottu_api.dto.UsuarioPatioDTO;
 import br.com.fiap.mottu_api.model.UsuarioPatio;
 import br.com.fiap.mottu_api.service.UsuarioPatioService;
 import jakarta.validation.Valid;
@@ -18,15 +19,16 @@ public class UsuarioPatioController {
         this.usuarioService = usuarioService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<UsuarioPatio>> listarTodos() {
-        return ResponseEntity.ok(usuarioService.listarTodos());
+    @PostMapping("/cadastro")
+    public ResponseEntity<UsuarioPatio> cadastrar(@RequestBody @Valid UsuarioPatioDTO dto) {
+        return ResponseEntity.status(201).body(usuarioService.salvar(dto));
     }
 
-    @PostMapping
-    public ResponseEntity<UsuarioPatio> salvar(@RequestBody @Valid UsuarioPatio usuario) {
-        return ResponseEntity.status(201).body(usuarioService.salvar(usuario));
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioPatio> login(@RequestParam String email, @RequestParam String senha) {
+        return ResponseEntity.ok(usuarioService.autenticar(email, senha));
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioPatio> buscarPorId(@PathVariable Long id) {
