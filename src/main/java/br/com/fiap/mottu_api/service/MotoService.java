@@ -1,6 +1,7 @@
 package br.com.fiap.mottu_api.service;
 
 import br.com.fiap.mottu_api.dto.MotoDTO;
+import br.com.fiap.mottu_api.dto.MotoResponseDTO;
 import br.com.fiap.mottu_api.model.Moto;
 import br.com.fiap.mottu_api.model.Patio;
 import br.com.fiap.mottu_api.model.StatusMoto;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class MotoService {
@@ -31,6 +31,10 @@ public class MotoService {
         return motoRepository.findByStatus(status, pageable);
     }
 
+    public List<Moto> listarTodos() {
+        return motoRepository.findAll();
+    }
+
     public List<Moto> buscarPorStatus(StatusMoto status) {
         return motoRepository.findAllByStatus(status);
     }
@@ -43,15 +47,6 @@ public class MotoService {
     public Moto buscarPorPlaca(String placa) {
         return motoRepository.findByPlaca(placa)
                 .orElseThrow(() -> new EntityNotFoundException("Moto não encontrada por placa"));
-    }
-
-    private String gerarCoordenadaGpsSimulada() {
-        double baseLat = -23.5505;
-        double baseLng = -46.6333;
-        Random random = new Random();
-        double offsetLat = (random.nextDouble() - 0.5) / 1000;
-        double offsetLng = (random.nextDouble() - 0.5) / 1000;
-        return String.format("%.6f, %.6f", baseLat + offsetLat, baseLng + offsetLng);
     }
 
     private String definirSetorPorStatus(StatusMoto status) {
@@ -87,27 +82,23 @@ public class MotoService {
     }
 
     public Moto salvar(MotoDTO dto) {
-        Patio patio = patioRepository.findById(dto.getPatioId())
-                .orElseThrow(() -> new EntityNotFoundException("Pátio não encontrado"));
+        Patio patio = patioRepository.findByNome(dto.getNomePatio())
+                .orElseThrow(() -> new EntityNotFoundException("Pátio '" + dto.getNomePatio() + "' não encontrado"));
 
-        String gps = (dto.getCoordenadaGps() == null || dto.getCoordenadaGps().isBlank())
-                ? gerarCoordenadaGpsSimulada() : dto.getCoordenadaGps();
-
-        Moto moto = new Moto(null, dto.getModelo(), dto.getPlaca(), dto.getStatus(), gps,
+        Moto moto = new Moto(null, dto.getModelo(), dto.getPlaca(), dto.getStatus(),
                 definirSetorPorStatus(dto.getStatus()), definirCorPorStatus(dto.getStatus()), patio);
+
         return motoRepository.save(moto);
     }
 
     public Moto atualizar(Long id, MotoDTO dto) {
         Moto moto = buscarPorId(id);
-        Patio patio = patioRepository.findById(dto.getPatioId())
-                .orElseThrow(() -> new EntityNotFoundException("Pátio não encontrado"));
+        Patio patio = patioRepository.findByNome(dto.getNomePatio())
+                .orElseThrow(() -> new EntityNotFoundException("Pátio '" + dto.getNomePatio() + "' não encontrado"));
 
         moto.setModelo(dto.getModelo());
         moto.setPlaca(dto.getPlaca());
         moto.setStatus(dto.getStatus());
-        moto.setCoordenadaGps((dto.getCoordenadaGps() == null || dto.getCoordenadaGps().isBlank())
-                ? gerarCoordenadaGpsSimulada() : dto.getCoordenadaGps());
         moto.setSetor(definirSetorPorStatus(dto.getStatus()));
         moto.setCorSetor(definirCorPorStatus(dto.getStatus()));
         moto.setPatio(patio);
@@ -116,14 +107,12 @@ public class MotoService {
 
     public Moto atualizarPorPlaca(String placa, MotoDTO dto) {
         Moto moto = buscarPorPlaca(placa);
-        Patio patio = patioRepository.findById(dto.getPatioId())
-                .orElseThrow(() -> new EntityNotFoundException("Pátio não encontrado"));
+        Patio patio = patioRepository.findByNome(dto.getNomePatio())
+                .orElseThrow(() -> new EntityNotFoundException("Pátio '" + dto.getNomePatio() + "' não encontrado"));
 
         moto.setModelo(dto.getModelo());
         moto.setPlaca(dto.getPlaca());
         moto.setStatus(dto.getStatus());
-        moto.setCoordenadaGps((dto.getCoordenadaGps() == null || dto.getCoordenadaGps().isBlank())
-                ? gerarCoordenadaGpsSimulada() : dto.getCoordenadaGps());
         moto.setSetor(definirSetorPorStatus(dto.getStatus()));
         moto.setCorSetor(definirCorPorStatus(dto.getStatus()));
         moto.setPatio(patio);
@@ -140,5 +129,17 @@ public class MotoService {
     public void deletarPorPlaca(String placa) {
         Moto moto = buscarPorPlaca(placa);
         motoRepository.deleteByPlaca(moto.getPlaca());
+    }
+
+    public MotoResponseDTO toResponseDTO(Moto moto) {
+        MotoResponseDTO dto = new MotoResponseDTO();
+        dto.setId(moto.getId());
+        dto.setModelo(moto.getModelo());
+        dto.setPlaca(moto.getPlaca());
+        dto.setStatus(moto.getStatus());
+        dto.setSetor(moto.getSetor());
+        dto.setCorSetor(moto.getCorSetor());
+        dto.setNomePatio(moto.getPatio().getNome());
+        return dto;
     }
 }

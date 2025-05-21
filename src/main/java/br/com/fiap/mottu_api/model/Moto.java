@@ -23,7 +23,6 @@ public class Moto {
     @NotNull(message = "Status é obrigatório")
     private StatusMoto status;
 
-    private String coordenadaGps;
 
     @NotBlank(message = "Setor é obrigatório")
     private String setor;
@@ -37,12 +36,11 @@ public class Moto {
     private Patio patio;
 
 
-    public Moto(Long id, String modelo, String placa, StatusMoto status, String coordenadaGps, String setor, String corSetor, Patio patio) {
+    public Moto(Long id, String modelo, String placa, StatusMoto status, String setor, String corSetor, Patio patio) {
         this.id = id;
         this.modelo = modelo;
         this.placa = placa;
         this.status = status;
-        this.coordenadaGps = coordenadaGps;
         this.setor = setor;
         this.corSetor = corSetor;
         this.patio = patio;
@@ -83,13 +81,6 @@ public class Moto {
         this.status = status;
     }
 
-    public String getCoordenadaGps() {
-        return coordenadaGps;
-    }
-
-    public void setCoordenadaGps(String coordenadaGps) {
-        this.coordenadaGps = coordenadaGps;
-    }
 
     public String getSetor() {
         return setor;
@@ -122,7 +113,6 @@ public class Moto {
                 ", modelo='" + modelo + '\'' +
                 ", placa='" + placa + '\'' +
                 ", status=" + status +
-                ", coordenadaGps='" + coordenadaGps + '\'' +
                 ", setor='" + setor + '\'' +
                 ", corSetor='" + corSetor + '\'' +
                 ", patio=" + patio +

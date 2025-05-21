@@ -1,5 +1,6 @@
 package br.com.fiap.mottu_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -17,6 +18,7 @@ public class Patio {
     private String nome;
 
     @OneToMany(mappedBy = "patio")
+    @JsonIgnore
     private List<Moto> motos;
 
     public Patio(Long id, String nome, List<Moto> motos) {

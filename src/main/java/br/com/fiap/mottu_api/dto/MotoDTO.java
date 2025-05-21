@@ -9,10 +9,9 @@ public class MotoDTO {
     private String modelo;
     private String placa;
     private StatusMoto status;
-    private String coordenadaGps;
     private String setor;
     private String corSetor;
-    private Long patioId;
+    private String nomePatio;
 
     public Long getId() {
         return id;
@@ -46,13 +45,6 @@ public class MotoDTO {
         this.status = status;
     }
 
-    public String getCoordenadaGps() {
-        return coordenadaGps;
-    }
-
-    public void setCoordenadaGps(String coordenadaGps) {
-        this.coordenadaGps = coordenadaGps;
-    }
 
     public String getSetor() {
         return setor;
@@ -70,12 +62,12 @@ public class MotoDTO {
         this.corSetor = corSetor;
     }
 
-    public Long getPatioId() {
-        return patioId;
+    public String getNomePatio() {
+        return nomePatio;
     }
 
-    public void setPatioId(Long patioId) {
-        this.patioId = patioId;
+    public void setNomePatio(String nomePatio) {
+        this.nomePatio = nomePatio;
     }
 
     @Override
@@ -85,10 +77,9 @@ public class MotoDTO {
                 ", modelo='" + modelo + '\'' +
                 ", placa='" + placa + '\'' +
                 ", status=" + status +
-                ", coordenadaGps='" + coordenadaGps + '\'' +
                 ", setor='" + setor + '\'' +
                 ", corSetor='" + corSetor + '\'' +
-                ", patioId=" + patioId +
+                ", patioId=" + nomePatio +
                 '}';
     }
 }

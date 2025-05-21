@@ -1,6 +1,7 @@
 package br.com.fiap.mottu_api.controller;
 
 import br.com.fiap.mottu_api.dto.MotoDTO;
+import br.com.fiap.mottu_api.dto.MotoResponseDTO;
 import br.com.fiap.mottu_api.model.Moto;
 import br.com.fiap.mottu_api.model.StatusMoto;
 import br.com.fiap.mottu_api.service.MotoService;
@@ -22,10 +23,16 @@ public class MotoController {
         this.motoService = motoService;
     }
 
-    @GetMapping
-    public ResponseEntity<Page<Moto>> listar(@RequestParam StatusMoto status, Pageable pageable) {
-        return ResponseEntity.ok(motoService.listar(status, pageable));
+    @GetMapping("/todos")
+    public ResponseEntity<List<MotoResponseDTO>> listarTodos() {
+        List<Moto> motos = motoService.listarTodos();
+        List<MotoResponseDTO> dtos = motos.stream()
+                .map(motoService::toResponseDTO)
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
+
+
 
     @GetMapping("/id/{id}")
     public ResponseEntity<Moto> buscarPorId(@PathVariable Long id) {
@@ -51,8 +58,9 @@ public class MotoController {
     }
 
     @PostMapping
-    public ResponseEntity<Moto> salvar(@RequestBody @Valid MotoDTO dto) {
-        return ResponseEntity.status(201).body(motoService.salvar(dto));
+    public ResponseEntity<MotoResponseDTO> salvar(@RequestBody @Valid MotoDTO dto) {
+        Moto moto = motoService.salvar(dto);
+        return ResponseEntity.status(201).body(motoService.toResponseDTO(moto));
     }
 
     @PutMapping("/id/{id}")
