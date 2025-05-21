@@ -29,10 +29,11 @@ API RESTful construída com **Spring Boot** para **gestão de motos, pátios e u
 - Spring Web
 - Spring Data JPA
 - Spring Validation (Jakarta)
-- Oracle Database (ojdbc11)
+- H2 Database
 - Swagger OpenAPI 3 (`springdoc-openapi-starter-webmvc-ui`)
 - Spring Cache (com HikariCP)
 - Gradle como gerenciador de build
+
 
 ---
 
@@ -62,34 +63,37 @@ br.com.fiap.mottu_api
 
 ## 📌 Exemplos de Endpoints
 
-##🔄 Moto
--GET /api/motos/id/{id}
+## 🔄 Moto
 
--GET /api/motos/placa/{placa}
+GET /api/motos/id/{id}
 
--GET /api/motos/status?status=DISPONIVEL
+GET /api/motos/placa/{placa}
 
--GET /api/motos/filtro?status=&setor=&cor=
+GET /api/motos/status?status=DISPONIVEL
 
--POST /api/motos
+GET /api/motos/filtro?status=&setor=&cor=
 
--PUT /api/motos/id/{id}
+POST /api/motos
 
--DELETE /api/motos/placa/{placa}
+PUT /api/motos/id/{id}
 
-##🏢 Pátio
--GET /api/patios
+DELETE /api/motos/placa/{placa}
 
--POST /api/patios
+## 🏢 Pátio
 
-##👷 Usuário de Pátio
--GET /api/usuarios
+GET /api/patios
 
--POST /api/usuarios
+POST /api/patios
 
--GET /api/usuarios/{id}
+## 👷 Usuário de Pátio
 
--DELETE /api/usuarios/{id}
+GET /api/usuarios
+
+POST /api/usuarios
+
+GET /api/usuarios/{id}
+
+DELETE /api/usuarios/{id}
 
 
 ## 👥 Equipe
