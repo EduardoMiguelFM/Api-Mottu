@@ -12,13 +12,11 @@ API RESTful construída com **Spring Boot** para **gestão de motos, pátios e u
 - ✅ Cadastro e gerenciamento de **pátios**
 - ✅ Cadastro e **autenticação de usuários de pátio**
 - ✅ Relacionamento entre entidades (Moto ↔ Pátio)
-- 🔍 Filtros por **status**, **setor** e **cor**
+- 🔍 Busca Por **status**, **setor** e **cor**
 - 🛠 Atualização e remoção por **ID ou placa**
-- 🧭 Campos adicionais gerados automaticamente:
-  - Status operacional (`enum`)
-  - Coordenada GPS simulada
-  - Setor (A-G)
-  - Cor (baseado no status)
+- 🧭 Regras automáticas:
+  - Status define **setor** e **cor**
+  - Ex: `DISPONIVEL` → `Setor A` / `Verde`
 
 ---
 
@@ -63,36 +61,25 @@ br.com.fiap.mottu_api
 
 ## 📌 Exemplos de Endpoints
 
-##🔄 Moto
-GET /api/motos/id/{id}
-
-GET /api/motos/placa/{placa}
-
-GET /api/motos/status?status=DISPONIVEL
-
-GET /api/motos/filtro?status=&setor=&cor=
-
-POST /api/motos
-
-PUT /api/motos/id/{id}
-
-DELETE /api/motos/placa/{placa}
+## 🔄 Moto
+GET /api/motos/id/{id}  
+GET /api/motos/placa/{placa}  
+GET /api/motos/status?status=DISPONIVEL  
+GET /api/motos/filtro?status=&setor=&cor=  
+POST /api/motos  
+PUT /api/motos/id/{id}  
+DELETE /api/motos/placa/{placa}  
 
 ## 🏢 Pátio
-GET /api/patios
-
-POST /api/patios
+GET /api/patios  
+POST /api/patios  
 
 ## 👷 Usuário de Pátio
-GET /api/usuarios
-
-POST /api/usuarios/cadastro
-
-POST /api/usuarios/login?email=&senha=
-
-GET /api/usuarios/{id}
-
-DELETE /api/usuarios/{id}
+GET /api/usuarios  
+POST /api/usuarios/cadastro  
+POST /api/usuarios/login?email=&senha=  
+GET /api/usuarios/{id}  
+DELETE /api/usuarios/{id}  
 
 
 ## 👥 Equipe
