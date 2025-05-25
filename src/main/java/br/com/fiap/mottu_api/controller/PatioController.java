@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/patios")
@@ -26,5 +27,10 @@ public class PatioController {
     @PostMapping
     public ResponseEntity<Patio> salvar(@RequestBody @Valid Patio patio) {
         return ResponseEntity.status(201).body(patioService.salvar(patio));
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Long>> statusGeral() {
+        return ResponseEntity.ok(patioService.statusGeralPatio());
     }
 }

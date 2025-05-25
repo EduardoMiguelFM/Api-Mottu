@@ -13,7 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MotoService {
@@ -129,6 +130,21 @@ public class MotoService {
     public void deletarPorPlaca(String placa) {
         Moto moto = buscarPorPlaca(placa);
         motoRepository.deleteByPlaca(moto.getPlaca());
+    }
+
+    public long contarMotosPorSetor(String setor) {
+        return motoRepository.findAll().stream()
+                .filter(m -> m.getSetor().equalsIgnoreCase("Setor " + setor))
+                .count();
+    }
+
+    public Map<String, Object> obterStatusPorPlaca(String placa) {
+        Moto moto = buscarPorPlaca(placa);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", moto.getStatus());
+        response.put("setor", moto.getSetor().replace("Setor ", ""));
+        response.put("cor", moto.getCorSetor());
+        return response;
     }
 
     public MotoResponseDTO toResponseDTO(Moto moto) {

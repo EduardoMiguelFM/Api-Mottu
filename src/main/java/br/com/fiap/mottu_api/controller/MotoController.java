@@ -11,7 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/motos")
@@ -26,13 +28,9 @@ public class MotoController {
     @GetMapping("/todos")
     public ResponseEntity<List<MotoResponseDTO>> listarTodos() {
         List<Moto> motos = motoService.listarTodos();
-        List<MotoResponseDTO> dtos = motos.stream()
-                .map(motoService::toResponseDTO)
-                .toList();
+        List<MotoResponseDTO> dtos = motos.stream().map(motoService::toResponseDTO).toList();
         return ResponseEntity.ok(dtos);
     }
-
-
 
     @GetMapping("/id/{id}")
     public ResponseEntity<Moto> buscarPorId(@PathVariable Long id) {
@@ -83,5 +81,19 @@ public class MotoController {
     public ResponseEntity<Void> deletarPorPlaca(@PathVariable String placa) {
         motoService.deletarPorPlaca(placa);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/patio/setor/{setor}/contagem")
+    public ResponseEntity<Map<String, Object>> contarPorSetor(@PathVariable String setor) {
+        long quantidade = motoService.contarMotosPorSetor(setor);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "DISPONIVEL");
+        response.put("quantidade", quantidade);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/patio/moto/{placa}/status")
+    public ResponseEntity<Map<String, Object>> statusPorPlaca(@PathVariable String placa) {
+        return ResponseEntity.ok(motoService.obterStatusPorPlaca(placa));
     }
 }

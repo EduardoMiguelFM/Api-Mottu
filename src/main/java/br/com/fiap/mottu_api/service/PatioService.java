@@ -1,19 +1,26 @@
 package br.com.fiap.mottu_api.service;
 
 import br.com.fiap.mottu_api.model.Patio;
+import br.com.fiap.mottu_api.model.StatusMoto;
+import br.com.fiap.mottu_api.repository.MotoRepository;
 import br.com.fiap.mottu_api.repository.PatioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PatioService {
 
     private final PatioRepository patioRepository;
+    private final MotoRepository motoRepository;
 
-    public PatioService(PatioRepository patioRepository) {
+    public PatioService(PatioRepository patioRepository, MotoRepository motoRepository) {
         this.patioRepository = patioRepository;
+        this.motoRepository = motoRepository;
     }
 
     public List<Patio> listarTodos() {
@@ -32,5 +39,15 @@ public class PatioService {
     public void deletar(Long id) {
         Patio patio = buscarPorId(id);
         patioRepository.delete(patio);
+    }
+
+    public Map<String, Long> statusGeralPatio() {
+        return Arrays.stream(StatusMoto.values())
+                .collect(Collectors.toMap(
+                        Enum::name,
+                        status -> motoRepository.findAll().stream()
+                                .filter(m -> m.getStatus() == status)
+                                .count()
+                ));
     }
 }
