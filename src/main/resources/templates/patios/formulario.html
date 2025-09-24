@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head">
+    <title th:text="${patio.id != null ? 'Editar Pátio' : 'Novo Pátio'} - MotoVision</title>
+</head>
+<body>
+    <div th:replace="fragments/header :: navbar"></div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 p-0" th:replace="fragments/menu :: sidebar"></div>
+            <div class="col-md-10">
+                <main class="p-4">
+                    <!-- Mensagens -->
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${success}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h1 class="h3 mb-0">
+                                <i class="fas fa-warehouse me-2 text-primary"></i>
+                                <span th:text="${patio.id != null ? 'Editar Pátio' : 'Novo Pátio'}">Novo Pátio</span>
+                            </h1>
+                            <p class="text-muted">
+                                <span th:text="${patio.id != null ? 'Edite os dados do pátio' : 'Preencha os dados para cadastrar um novo pátio'}">
+                                    Preencha os dados para cadastrar um novo pátio
+                                </span>
+                            </p>
+                        </div>
+                        <a href="/patios" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                        </a>
+                    </div>
+                    
+                    <!-- Formulário -->
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-edit me-2"></i>Dados do Pátio
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <form th:action="${patio.id != null ? '/patios/' + patio.id : '/patios'}" 
+                                          th:object="${patio}" method="post">
+                                        
+                                        <div class="mb-3">
+                                            <label for="nome" class="form-label">
+                                                <i class="fas fa-warehouse me-1"></i>Nome do Pátio *
+                                            </label>
+                                            <input type="text" class="form-control" id="nome" th:field="*{nome}" 
+                                                   placeholder="Ex: Pátio Butantã" required>
+                                            <div th:if="${#fields.hasErrors('nome')}" class="text-danger">
+                                                <small th:errors="*{nome}"></small>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between">
+                                            <a href="/patios" class="btn btn-secondary">
+                                                <i class="fas fa-times me-2"></i>Cancelar
+                                            </a>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save me-2"></i>
+                                                <span th:text="${patio.id != null ? 'Atualizar' : 'Salvar'}">Salvar</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- Informações Adicionais -->
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>Informações
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div th:if="${patio.id != null}">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    <strong>Criado em:</strong><br>
+                                                    <span th:text="${#temporals.format(patio.createdAt, 'dd/MM/yyyy HH:mm')}">19/09/2025 23:07</span>
+                                                </small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-edit me-1"></i>
+                                                    <strong>Atualizado em:</strong><br>
+                                                    <span th:text="${#temporals.format(patio.updatedAt, 'dd/MM/yyyy HH:mm')}">19/09/2025 23:07</span>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <h6>Funcionalidades do Pátio:</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-check text-success me-2"></i>Organização automática por setores</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Controle de status das motos</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Relatórios de ocupação</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Histórico de movimentações</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

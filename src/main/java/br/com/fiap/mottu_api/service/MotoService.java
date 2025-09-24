@@ -92,6 +92,10 @@ public class MotoService {
         return motoRepository.save(moto);
     }
 
+    public Moto salvar(Moto moto) {
+        return motoRepository.save(moto);
+    }
+
     public Moto atualizar(Long id, MotoDTO dto) {
         Moto moto = buscarPorId(id);
         Patio patio = patioRepository.findByNome(dto.getNomePatio())
@@ -104,6 +108,17 @@ public class MotoService {
         moto.setCorSetor(definirCorPorStatus(dto.getStatus()));
         moto.setPatio(patio);
         return motoRepository.save(moto);
+    }
+
+    public Moto atualizar(Long id, Moto moto) {
+        Moto motoExistente = buscarPorId(id);
+        motoExistente.setModelo(moto.getModelo());
+        motoExistente.setPlaca(moto.getPlaca());
+        motoExistente.setStatus(moto.getStatus());
+        motoExistente.setSetor(moto.getSetor());
+        motoExistente.setCorSetor(moto.getCorSetor());
+        motoExistente.setPatio(moto.getPatio());
+        return motoRepository.save(motoExistente);
     }
 
     public Moto atualizarPorPlaca(String placa, MotoDTO dto) {

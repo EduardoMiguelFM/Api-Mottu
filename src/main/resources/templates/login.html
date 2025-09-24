@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/header :: head">
+    <title>Login - MotoVision</title>
+    <style>
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+      }
+      .login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .login-header {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+      }
+      .login-body {
+        padding: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+          <div class="login-card">
+            <div class="login-header">
+              <h3><i class="fas fa-motorcycle me-2"></i>MotoVision</h3>
+              <p class="mb-0">Sistema de Gestão de Motos</p>
+            </div>
+            <div class="login-body">
+              <!-- Mensagens -->
+              <div th:if="${param.error}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                Email ou senha inválidos!
+              </div>
+
+              <div th:if="${param.logout}" class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                Logout realizado com sucesso!
+              </div>
+
+              <div th:if="${success}" class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+              </div>
+
+              <!-- Formulário de Login -->
+              <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                  <label for="username" class="form-label">
+                    <i class="fas fa-envelope me-1"></i>Email
+                  </label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="username"
+                    name="username"
+                    placeholder="seu@email.com"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="password" class="form-label">
+                    <i class="fas fa-lock me-1"></i>Senha
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    placeholder="Sua senha"
+                    required
+                  />
+                </div>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Entrar
+                  </button>
+                </div>
+              </form>
+
+              <hr class="my-4" />
+
+              <div class="text-center">
+                <p class="mb-0">Não tem uma conta?</p>
+                <a href="/cadastro" class="btn btn-outline-primary">
+                  <i class="fas fa-user-plus me-2"></i>Cadastrar-se
+                </a>
+              </div>
+
+              <!-- Usuários de teste -->
+              <div class="mt-4">
+                <small class="text-muted">
+                  <strong>Usuários de teste:</strong><br />
+                  Admin: admin@mottu.com.br / admin123<br />
+                  Supervisor: supervisor@mottu.com.br / user123<br />
+                  Usuário: operador@mottu.com.br / user123
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

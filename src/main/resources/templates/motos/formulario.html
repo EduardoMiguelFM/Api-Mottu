@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head">
+    <title th:text="${moto.id != null ? 'Editar Moto' : 'Nova Moto'} - MotoVision</title>
+</head>
+<body>
+    <div th:replace="fragments/header :: navbar"></div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 p-0" th:replace="fragments/menu :: sidebar"></div>
+            <div class="col-md-10">
+                <main class="p-4">
+                    <!-- Mensagens -->
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${success}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h1 class="h3 mb-0">
+                                <i class="fas fa-motorcycle me-2 text-primary"></i>
+                                <span th:text="${moto.id != null ? 'Editar Moto' : 'Nova Moto'}">Nova Moto</span>
+                            </h1>
+                            <p class="text-muted">
+                                <span th:text="${moto.id != null ? 'Edite os dados da moto' : 'Preencha os dados para cadastrar uma nova moto'}">
+                                    Preencha os dados para cadastrar uma nova moto
+                                </span>
+                            </p>
+                        </div>
+                        <a href="/motos" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                        </a>
+                    </div>
+                    
+                    <!-- Formulário -->
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-edit me-2"></i>Dados da Moto
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <form th:action="${moto.id != null ? '/motos/' + moto.id : '/motos'}" 
+                                          th:object="${moto}" method="post">
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="modelo" class="form-label">
+                                                    <i class="fas fa-motorcycle me-1"></i>Modelo *
+                                                </label>
+                                                <input type="text" class="form-control" id="modelo" th:field="*{modelo}" 
+                                                       placeholder="Ex: Honda Biz" required>
+                                                <div th:if="${#fields.hasErrors('modelo')}" class="text-danger">
+                                                    <small th:errors="*{modelo}"></small>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-3">
+                                                <label for="placa" class="form-label">
+                                                    <i class="fas fa-id-card me-1"></i>Placa *
+                                                </label>
+                                                <input type="text" class="form-control" id="placa" th:field="*{placa}" 
+                                                       placeholder="ABC1234" maxlength="7" required>
+                                                <div th:if="${#fields.hasErrors('placa')}" class="text-danger">
+                                                    <small th:errors="*{placa}"></small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="status" class="form-label">
+                                                    <i class="fas fa-flag me-1"></i>Status *
+                                                </label>
+                                                <select class="form-select" id="status" th:field="*{status}" required>
+                                                    <option value="">Selecione o status</option>
+                                                    <option th:each="status : ${statusList}" 
+                                                            th:value="${status}" 
+                                                            th:text="${status}">
+                                                    </option>
+                                                </select>
+                                                <div th:if="${#fields.hasErrors('status')}" class="text-danger">
+                                                    <small th:errors="*{status}"></small>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-3">
+                                                <label for="patio" class="form-label">
+                                                    <i class="fas fa-warehouse me-1"></i>Pátio *
+                                                </label>
+                                                <select class="form-select" id="patio" th:field="*{patio.id}" required>
+                                                    <option value="">Selecione o pátio</option>
+                                                    <option th:each="patio : ${patios}" 
+                                                            th:value="${patio.id}" 
+                                                            th:text="${patio.nome}">
+                                                    </option>
+                                                </select>
+                                                <div th:if="${#fields.hasErrors('patio')}" class="text-danger">
+                                                    <small th:errors="*{patio}"></small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Campos de Setor e Cor (readonly) -->
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="setor" class="form-label">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>Setor
+                                                </label>
+                                                <input type="text" class="form-control" id="setor" th:field="*{setor}" 
+                                                       readonly>
+                                                <small class="text-muted">Definido automaticamente pelo status</small>
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-3">
+                                                <label for="corSetor" class="form-label">
+                                                    <i class="fas fa-palette me-1"></i>Cor do Setor
+                                                </label>
+                                                <input type="text" class="form-control" id="corSetor" th:field="*{corSetor}" 
+                                                       readonly>
+                                                <small class="text-muted">Definida automaticamente pelo status</small>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between">
+                                            <a href="/motos" class="btn btn-secondary">
+                                                <i class="fas fa-times me-2"></i>Cancelar
+                                            </a>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save me-2"></i>
+                                                <span th:text="${moto.id != null ? 'Atualizar' : 'Salvar'}">Salvar</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- Informações sobre Status -->
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>Legenda de Status
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-success me-2">DISPONIVEL</span>
+                                                <span class="text-muted">Setor A - Verde</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-primary me-2">RESERVADA</span>
+                                                <span class="text-muted">Setor B - Azul</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-warning me-2">MANUTENCAO</span>
+                                                <span class="text-muted">Setor C - Amarelo</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-info me-2">FALTA_PECA</span>
+                                                <span class="text-muted">Setor D - Laranja</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-secondary me-2">INDISPONIVEL</span>
+                                                <span class="text-muted">Setor E - Cinza</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-danger me-2">DANOS_ESTRUTURAIS</span>
+                                                <span class="text-muted">Setor F - Vermelho</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-dark me-2">SINISTRO</span>
+                                                <span class="text-muted">Setor G - Preto</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    
+    <script>
+        // Atualizar setor e cor automaticamente quando o status mudar
+        document.getElementById('status').addEventListener('change', function() {
+            const status = this.value;
+            const setorField = document.getElementById('setor');
+            const corField = document.getElementById('corSetor');
+            
+            const statusMap = {
+                'DISPONIVEL': { setor: 'Setor A', cor: 'Verde' },
+                'RESERVADA': { setor: 'Setor B', cor: 'Azul' },
+                'MANUTENCAO': { setor: 'Setor C', cor: 'Amarelo' },
+                'FALTA_PECA': { setor: 'Setor D', cor: 'Laranja' },
+                'INDISPONIVEL': { setor: 'Setor E', cor: 'Cinza' },
+                'DANOS_ESTRUTURAIS': { setor: 'Setor F', cor: 'Vermelho' },
+                'SINISTRO': { setor: 'Setor G', cor: 'Preto' }
+            };
+            
+            if (statusMap[status]) {
+                setorField.value = statusMap[status].setor;
+                corField.value = statusMap[status].cor;
+            } else {
+                setorField.value = '';
+                corField.value = '';
+            }
+        });
+        
+        // Executar na carga da página se já houver um status selecionado
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusSelect = document.getElementById('status');
+            if (statusSelect.value) {
+                statusSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+</body>
+</html>

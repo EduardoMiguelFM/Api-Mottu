@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/header :: head">
+    <title>Cadastro - MotoVision</title>
+    <style>
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+      }
+      .cadastro-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .cadastro-header {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+      }
+      .cadastro-body {
+        padding: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="cadastro-card">
+            <div class="cadastro-header">
+              <h3><i class="fas fa-user-plus me-2"></i>Cadastro de Usuário</h3>
+              <p class="mb-0">Crie sua conta no MotoVision</p>
+            </div>
+            <div class="cadastro-body">
+              <!-- Mensagens -->
+              <div th:if="${error}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span th:text="${error}"></span>
+              </div>
+
+              <!-- Formulário de Cadastro -->
+              <form
+                th:action="@{/cadastro}"
+                th:object="${usuario}"
+                method="post"
+              >
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="nome" class="form-label">
+                      <i class="fas fa-user me-1"></i>Nome Completo
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nome"
+                      th:field="*{nome}"
+                      placeholder="Seu nome completo"
+                      required
+                    />
+                    <div
+                      th:if="${#fields.hasErrors('nome')}"
+                      class="text-danger"
+                    >
+                      <small th:errors="*{nome}"></small>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="cpf" class="form-label">
+                      <i class="fas fa-id-card me-1"></i>CPF
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cpf"
+                      th:field="*{cpf}"
+                      placeholder="00000000000"
+                      maxlength="11"
+                      required
+                    />
+                    <div
+                      th:if="${#fields.hasErrors('cpf')}"
+                      class="text-danger"
+                    >
+                      <small th:errors="*{cpf}"></small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">
+                      <i class="fas fa-envelope me-1"></i>Email
+                    </label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      th:field="*{email}"
+                      placeholder="seu@email.com"
+                      required
+                    />
+                    <div
+                      th:if="${#fields.hasErrors('email')}"
+                      class="text-danger"
+                    >
+                      <small th:errors="*{email}"></small>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="funcao" class="form-label">
+                      <i class="fas fa-briefcase me-1"></i>Função
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="funcao"
+                      th:field="*{funcao}"
+                      placeholder="Sua função"
+                      required
+                    />
+                    <div
+                      th:if="${#fields.hasErrors('funcao')}"
+                      class="text-danger"
+                    >
+                      <small th:errors="*{funcao}"></small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="senha" class="form-label">
+                    <i class="fas fa-lock me-1"></i>Senha
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="senha"
+                    th:field="*{senha}"
+                    placeholder="Mínimo 6 caracteres"
+                    required
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('senha')}"
+                    class="text-danger"
+                  >
+                    <small th:errors="*{senha}"></small>
+                  </div>
+                </div>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Cadastrar
+                  </button>
+                </div>
+              </form>
+
+              <hr class="my-4" />
+
+              <div class="text-center">
+                <p class="mb-0">Já tem uma conta?</p>
+                <a href="/login" class="btn btn-outline-primary">
+                  <i class="fas fa-sign-in-alt me-2"></i>Fazer Login
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

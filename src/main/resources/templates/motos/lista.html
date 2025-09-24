@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/header :: head">
+    <title>Motos - MotoVision</title>
+  </head>
+  <body>
+    <div th:replace="fragments/header :: navbar"></div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-2 p-0" th:replace="fragments/menu :: sidebar"></div>
+        <div class="col-md-10">
+          <main class="p-4">
+            <!-- Mensagens -->
+            <div
+              th:if="${success}"
+              class="alert alert-success alert-dismissible fade show"
+              role="alert"
+            >
+              <i class="fas fa-check-circle me-2"></i>
+              <span th:text="${success}"></span>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+              ></button>
+            </div>
+
+            <div
+              th:if="${error}"
+              class="alert alert-danger alert-dismissible fade show"
+              role="alert"
+            >
+              <i class="fas fa-exclamation-circle me-2"></i>
+              <span th:text="${error}"></span>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+              ></button>
+            </div>
+
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h1 class="h3 mb-0">
+                  <i class="fas fa-motorcycle me-2 text-primary"></i>Gerenciar
+                  Motos
+                </h1>
+                <p class="text-muted">
+                  Lista de todas as motos cadastradas no sistema
+                </p>
+              </div>
+              <a href="/motos/novo" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Nova Moto
+              </a>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <i class="fas fa-filter me-2"></i>Filtros
+                </h5>
+                <form method="get" th:action="@{/motos}">
+                  <div class="row g-3">
+                    <div class="col-md-3">
+                      <label for="status" class="form-label">Status</label>
+                      <select class="form-select" id="status" name="status">
+                        <option value="">Todos os status</option>
+                        <option
+                          th:each="status : ${statusList}"
+                          th:value="${status}"
+                          th:text="${status}"
+                          th:selected="${filtroStatus == status}"
+                        ></option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <label for="setor" class="form-label">Setor</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="setor"
+                        name="setor"
+                        th:value="${filtroSetor}"
+                        placeholder="Ex: Setor A"
+                      />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="cor" class="form-label">Cor</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="cor"
+                        name="cor"
+                        th:value="${filtroCor}"
+                        placeholder="Ex: Verde"
+                      />
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                      <button
+                        type="submit"
+                        class="btn btn-outline-primary me-2"
+                      >
+                        <i class="fas fa-search me-1"></i>Filtrar
+                      </button>
+                      <a href="/motos" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>Limpar
+                      </a>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Tabela de Motos -->
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-0">
+                  <i class="fas fa-list me-2"></i>Lista de Motos
+                  <span
+                    class="badge bg-primary ms-2"
+                    th:text="${#lists.size(motos)}"
+                    >0</span
+                  >
+                </h5>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>ID</th>
+                        <th>Modelo</th>
+                        <th>Placa</th>
+                        <th>Status</th>
+                        <th>Setor</th>
+                        <th>Cor</th>
+                        <th>Pátio</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="moto : ${motos}">
+                        <td th:text="${moto.id}">1</td>
+                        <td th:text="${moto.modelo}">Honda Biz</td>
+                        <td>
+                          <span
+                            class="badge bg-secondary"
+                            th:text="${moto.placa}"
+                            >ABC1234</span
+                          >
+                        </td>
+                        <td>
+                          <span
+                            class="badge"
+                            th:classappend="'bg-' + ${#strings.toLowerCase(moto.status.name()) == 'disponivel' ? 'success' : 
+                                                                        #strings.toLowerCase(moto.status.name()) == 'reservada' ? 'primary' : 
+                                                                        #strings.toLowerCase(moto.status.name()) == 'manutencao' ? 'warning' : 
+                                                                        #strings.toLowerCase(moto.status.name()) == 'falta_peca' ? 'info' : 
+                                                                        #strings.toLowerCase(moto.status.name()) == 'indisponivel' ? 'secondary' : 
+                                                                        #strings.toLowerCase(moto.status.name()) == 'danos_estruturais' ? 'danger' : 'dark'}"
+                            th:text="${moto.status}"
+                            >DISPONIVEL</span
+                          >
+                        </td>
+                        <td th:text="${moto.setor}">Setor A</td>
+                        <td>
+                          <span
+                            class="badge"
+                            th:style="'background-color: ' + ${moto.corSetor == 'Verde' ? '#28a745' : 
+                                                                      moto.corSetor == 'Azul' ? '#007bff' : 
+                                                                      moto.corSetor == 'Amarelo' ? '#ffc107' : 
+                                                                      moto.corSetor == 'Laranja' ? '#fd7e14' : 
+                                                                      moto.corSetor == 'Cinza' ? '#6c757d' : 
+                                                                      moto.corSetor == 'Vermelho' ? '#dc3545' : '#000000'}"
+                            th:text="${moto.corSetor}"
+                            >Verde</span
+                          >
+                        </td>
+                        <td th:text="${moto.patio?.nome}">Pátio Butantã</td>
+                        <td>
+                          <div class="btn-group" role="group">
+                            <a
+                              th:href="@{/motos/detalhes/{id}(id=${moto.id})}"
+                              class="btn btn-sm btn-outline-info"
+                              title="Ver detalhes"
+                            >
+                              <i class="fas fa-eye"></i>
+                            </a>
+                            <a
+                              th:href="@{/motos/editar/{id}(id=${moto.id})}"
+                              class="btn btn-sm btn-outline-warning"
+                              title="Editar"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-outline-danger"
+                              th:onclick="'confirmarExclusao(' + ${moto.id} + ')'"
+                              title="Excluir"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr th:if="${#lists.isEmpty(motos)}">
+                        <td colspan="8" class="text-center text-muted py-4">
+                          <i class="fas fa-motorcycle fa-3x mb-3 d-block"></i>
+                          Nenhuma moto encontrada
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirmar Exclusão</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Tem certeza que deseja excluir esta moto? Esta ação não pode ser
+            desfeita.
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <form
+              th:action="@{/motos/deletar/{id}}"
+              method="post"
+              id="deleteForm"
+            >
+              <button type="submit" class="btn btn-danger">Excluir</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script>
+      function confirmarExclusao(id) {
+        document.getElementById("deleteForm").action = "/motos/deletar/" + id;
+        new bootstrap.Modal(document.getElementById("confirmModal")).show();
+      }
+    </script>
+  </body>
+</html>

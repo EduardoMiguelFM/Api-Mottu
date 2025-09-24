@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@Table(name = "moto")
 public class Moto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,18 +24,22 @@ public class Moto {
     @NotNull(message = "Status é obrigatório")
     private StatusMoto status;
 
-
     @NotBlank(message = "Setor é obrigatório")
     private String setor;
 
-
     @NotBlank(message = "Cor do setor é obrigatória")
+    @Column(name = "cor_setor")
     private String corSetor;
 
-
     @ManyToOne
+    @JoinColumn(name = "patio_id")
     private Patio patio;
 
+    @Column(name = "created_at")
+    private java.time.LocalDateTime createdAt = java.time.LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private java.time.LocalDateTime updatedAt = java.time.LocalDateTime.now();
 
     public Moto(Long id, String modelo, String placa, StatusMoto status, String setor, String corSetor, Patio patio) {
         this.id = id;
@@ -81,7 +86,6 @@ public class Moto {
         this.status = status;
     }
 
-
     public String getSetor() {
         return setor;
     }
@@ -104,6 +108,27 @@ public class Moto {
 
     public void setPatio(Patio patio) {
         this.patio = patio;
+    }
+
+    public java.time.LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(java.time.LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public java.time.LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(java.time.LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = java.time.LocalDateTime.now();
     }
 
     @Override

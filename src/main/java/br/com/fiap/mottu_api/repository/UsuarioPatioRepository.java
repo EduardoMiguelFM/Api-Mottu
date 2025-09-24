@@ -7,5 +7,9 @@ import java.util.Optional;
 
 public interface UsuarioPatioRepository extends JpaRepository<UsuarioPatio, Long> {
 
+    Optional<UsuarioPatio> findByEmail(String email);
+
     Optional<UsuarioPatio> findByEmailAndSenha(String email, String senha);
+
+    Optional<UsuarioPatio> findByCpf(String cpf);
 }

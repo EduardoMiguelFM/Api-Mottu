@@ -31,6 +31,12 @@ public class PatioService {
         return patioRepository.save(patio);
     }
 
+    public Patio atualizar(Long id, Patio patio) {
+        Patio patioExistente = buscarPorId(id);
+        patioExistente.setNome(patio.getNome());
+        return patioRepository.save(patioExistente);
+    }
+
     public Patio buscarPorId(Long id) {
         return patioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pátio não encontrado"));
@@ -47,7 +53,6 @@ public class PatioService {
                         Enum::name,
                         status -> motoRepository.findAll().stream()
                                 .filter(m -> m.getStatus() == status)
-                                .count()
-                ));
+                                .count()));
     }
 }
