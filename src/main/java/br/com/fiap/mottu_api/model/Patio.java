@@ -19,6 +19,10 @@ public class Patio {
     @Size(min = 2, max = 100, message = "Nome deve ter entre 2 e 100 caracteres")
     private String nome;
 
+    @NotBlank(message = "Endereço é obrigatório")
+    @Size(min = 5, max = 255, message = "Endereço deve ter entre 5 e 255 caracteres")
+    private String endereco;
+
     @OneToMany(mappedBy = "patio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Moto> motos;
@@ -29,9 +33,10 @@ public class Patio {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    public Patio(Long id, String nome, List<Moto> motos) {
+    public Patio(Long id, String nome, String endereco, List<Moto> motos) {
         this.id = id;
         this.nome = nome;
+        this.endereco = endereco;
         this.motos = motos;
     }
 
@@ -52,6 +57,14 @@ public class Patio {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 
     public List<Moto> getMotos() {
@@ -88,6 +101,7 @@ public class Patio {
         return "Patio{" +
                 "id=" + id +
                 ", nome='" + nome + '\'' +
+                ", endereco='" + endereco + '\'' +
                 ", motos=" + motos +
                 '}';
     }

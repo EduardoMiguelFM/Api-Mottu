@@ -31,6 +31,10 @@ public class Moto {
     @Column(name = "cor_setor")
     private String corSetor;
 
+    @Size(max = 500, message = "Descrição deve ter no máximo 500 caracteres")
+    @Column(name = "descricao")
+    private String descricao;
+
     @ManyToOne
     @JoinColumn(name = "patio_id")
     private Patio patio;
@@ -41,13 +45,15 @@ public class Moto {
     @Column(name = "updated_at")
     private java.time.LocalDateTime updatedAt = java.time.LocalDateTime.now();
 
-    public Moto(Long id, String modelo, String placa, StatusMoto status, String setor, String corSetor, Patio patio) {
+    public Moto(Long id, String modelo, String placa, StatusMoto status, String setor, String corSetor,
+            String descricao, Patio patio) {
         this.id = id;
         this.modelo = modelo;
         this.placa = placa;
         this.status = status;
         this.setor = setor;
         this.corSetor = corSetor;
+        this.descricao = descricao;
         this.patio = patio;
     }
 
@@ -100,6 +106,14 @@ public class Moto {
 
     public void setCorSetor(String corSetor) {
         this.corSetor = corSetor;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public Patio getPatio() {

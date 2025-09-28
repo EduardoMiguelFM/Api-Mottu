@@ -1,13 +1,23 @@
 package br.com.fiap.mottu_api.model;
 
 public enum StatusMoto {
-    DISPONIVEL,
-    RESERVADA,
-    INDISPONIVEL,
-    MANUTENCAO,
-    FALTA_PECA,
-    DANOS_ESTRUTURAIS,
-    SINISTRO;
+    DISPONIVEL("Disponível"),
+    RESERVADA("Reservada"),
+    INDISPONIVEL("Indisponível"),
+    MANUTENCAO("Manutenção"),
+    FALTA_PECA("Falta Peça"),
+    DANOS_ESTRUTURAIS("Danos Estruturais"),
+    SINISTRO("Sinistro");
+
+    private final String descricao;
+
+    StatusMoto(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
 
     private String definirCorPorStatus(StatusMoto status) {
         return switch (status) {
@@ -20,6 +30,7 @@ public enum StatusMoto {
             case SINISTRO -> "Preto";
         };
     }
+
     private String definirSetorPorStatus(StatusMoto status) {
         return switch (status) {
             case DISPONIVEL -> "Setor A";

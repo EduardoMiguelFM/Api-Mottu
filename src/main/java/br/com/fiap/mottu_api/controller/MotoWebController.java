@@ -33,7 +33,15 @@ public class MotoWebController {
         List<Moto> motos;
 
         if (status != null || setor != null || cor != null) {
-            StatusMoto statusEnum = status != null ? StatusMoto.valueOf(status) : null;
+            StatusMoto statusEnum = null;
+            if (status != null && !status.isEmpty()) {
+                try {
+                    statusEnum = StatusMoto.valueOf(status);
+                } catch (IllegalArgumentException e) {
+                    // Se o status não for válido, ignora o filtro
+                    statusEnum = null;
+                }
+            }
             motos = motoService.filtrarPorStatusSetorCor(statusEnum, setor, cor);
         } else {
             motos = motoService.listarTodos();
@@ -41,6 +49,10 @@ public class MotoWebController {
 
         model.addAttribute("motos", motos);
         model.addAttribute("statusList", StatusMoto.values());
+        model.addAttribute("setorList",
+                java.util.Arrays.asList("Setor A", "Setor B", "Setor C", "Setor D", "Setor E", "Setor F", "Setor G"));
+        model.addAttribute("corList",
+                java.util.Arrays.asList("Verde", "Azul", "Amarelo", "Laranja", "Cinza", "Vermelho", "Preto"));
         model.addAttribute("filtroStatus", status);
         model.addAttribute("filtroSetor", setor);
         model.addAttribute("filtroCor", cor);
@@ -60,12 +72,20 @@ public class MotoWebController {
 
     @GetMapping("/editar/{id}")
     public String editarFormulario(@PathVariable Long id, Model model) {
-        Moto moto = motoService.buscarPorId(id);
-        model.addAttribute("moto", moto);
-        model.addAttribute("patios", patioService.listarTodos());
-        model.addAttribute("statusList", StatusMoto.values());
-        model.addAttribute("role", "USER"); // Valor padrão
-        return "motos/formulario";
+        try {
+            Moto moto = motoService.buscarPorId(id);
+            System.out.println("DEBUG: Moto encontrada - ID: " + moto.getId() + ", Descrição: " + moto.getDescricao());
+            model.addAttribute("moto", moto);
+            model.addAttribute("patios", patioService.listarTodos());
+            model.addAttribute("statusList", StatusMoto.values());
+            model.addAttribute("role", "USER"); // Valor padrão
+            return "motos/formulario";
+        } catch (Exception e) {
+            System.out.println("DEBUG: Erro ao carregar moto: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Erro ao carregar formulário de edição: " + e.getMessage());
+            return "redirect:/motos";
+        }
     }
 
     @PostMapping
@@ -121,10 +141,15 @@ public class MotoWebController {
 
     @GetMapping("/detalhes/{id}")
     public String detalhes(@PathVariable Long id, Model model) {
-        Moto moto = motoService.buscarPorId(id);
-        model.addAttribute("moto", moto);
-        model.addAttribute("role", "USER"); // Valor padrão
-        return "motos/detalhes";
+        try {
+            Moto moto = motoService.buscarPorId(id);
+            model.addAttribute("moto", moto);
+            model.addAttribute("role", "USER"); // Valor padrão
+            return "motos/detalhes";
+        } catch (Exception e) {
+            model.addAttribute("error", "Erro ao carregar detalhes da moto: " + e.getMessage());
+            return "redirect:/motos";
+        }
     }
 
     private void aplicarLogicaSetorCor(Moto moto) {
@@ -132,6 +157,11 @@ public class MotoWebController {
         if (status != null) {
             moto.setSetor(obterSetorPorStatus(status));
             moto.setCorSetor(obterCorPorStatus(status));
+
+            // Gerar descrição baseada no status se não houver descrição
+            if (moto.getDescricao() == null || moto.getDescricao().trim().isEmpty()) {
+                moto.setDescricao(gerarDescricaoPorStatus(status, moto.getModelo()));
+            }
         }
     }
 
@@ -156,6 +186,26 @@ public class MotoWebController {
             case INDISPONIVEL -> "Cinza";
             case DANOS_ESTRUTURAIS -> "Vermelho";
             case SINISTRO -> "Preto";
+        };
+    }
+
+    private String gerarDescricaoPorStatus(StatusMoto status, String modelo) {
+        String modeloInfo = modelo != null ? modelo + " " : "Moto ";
+
+        return switch (status) {
+            case DISPONIVEL ->
+                modeloInfo + "em perfeito estado de funcionamento, revisada e pronta para entrega ao cliente";
+            case RESERVADA ->
+                modeloInfo + "reservada para cliente, aguardando retirada. Verificar documentação antes da entrega";
+            case MANUTENCAO ->
+                modeloInfo + "em manutenção preventiva/corretiva. Aguardando finalização dos serviços técnicos";
+            case FALTA_PECA ->
+                modeloInfo + "aguardando peças de reposição. Serviço de manutenção interrompido temporariamente";
+            case INDISPONIVEL ->
+                modeloInfo + "temporariamente indisponível para uso. Aguardando liberação técnica ou administrativa";
+            case DANOS_ESTRUTURAIS ->
+                modeloInfo + "com danos estruturais identificados. Necessária avaliação técnica detalhada";
+            case SINISTRO -> modeloInfo + "envolvida em sinistro. Aguardando perícia e definição de responsabilidades";
         };
     }
 }

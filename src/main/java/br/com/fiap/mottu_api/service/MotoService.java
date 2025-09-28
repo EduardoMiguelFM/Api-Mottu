@@ -76,8 +76,10 @@ public class MotoService {
     public List<Moto> filtrarPorStatusSetorCor(StatusMoto status, String setor, String cor) {
         return motoRepository.findAll().stream()
                 .filter(m -> (status == null || m.getStatus() == status))
-                .filter(m -> (setor == null || m.getSetor().equalsIgnoreCase(setor)))
-                .filter(m -> (cor == null || m.getCorSetor().equalsIgnoreCase(cor)))
+                .filter(m -> (setor == null || setor.isEmpty()
+                        || (m.getSetor() != null && m.getSetor().equalsIgnoreCase(setor))))
+                .filter(m -> (cor == null || cor.isEmpty()
+                        || (m.getCorSetor() != null && m.getCorSetor().equalsIgnoreCase(cor))))
                 .toList();
     }
 
@@ -86,7 +88,8 @@ public class MotoService {
                 .orElseThrow(() -> new EntityNotFoundException("Pátio '" + dto.getNomePatio() + "' não encontrado"));
 
         Moto moto = new Moto(null, dto.getModelo(), dto.getPlaca(), dto.getStatus(),
-                definirSetorPorStatus(dto.getStatus()), definirCorPorStatus(dto.getStatus()), patio);
+                definirSetorPorStatus(dto.getStatus()), definirCorPorStatus(dto.getStatus()), dto.getDescricao(),
+                patio);
 
         return motoRepository.save(moto);
     }

@@ -2,8 +2,6 @@ package br.com.fiap.mottu_api.dto;
 
 import br.com.fiap.mottu_api.model.StatusMoto;
 
-
-
 public class MotoDTO {
     private Long id;
     private String modelo;
@@ -11,6 +9,7 @@ public class MotoDTO {
     private StatusMoto status;
     private String setor;
     private String corSetor;
+    private String descricao;
     private String nomePatio;
 
     public Long getId() {
@@ -45,7 +44,6 @@ public class MotoDTO {
         this.status = status;
     }
 
-
     public String getSetor() {
         return setor;
     }
@@ -60,6 +58,14 @@ public class MotoDTO {
 
     public void setCorSetor(String corSetor) {
         this.corSetor = corSetor;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public String getNomePatio() {
@@ -79,6 +85,7 @@ public class MotoDTO {
                 ", status=" + status +
                 ", setor='" + setor + '\'' +
                 ", corSetor='" + corSetor + '\'' +
+                ", descricao='" + descricao + '\'' +
                 ", patioId=" + nomePatio +
                 '}';
     }

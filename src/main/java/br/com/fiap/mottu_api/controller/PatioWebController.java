@@ -1,6 +1,8 @@
 package br.com.fiap.mottu_api.controller;
 
+import br.com.fiap.mottu_api.model.Moto;
 import br.com.fiap.mottu_api.model.Patio;
+import br.com.fiap.mottu_api.service.MotoService;
 import br.com.fiap.mottu_api.service.PatioService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -16,9 +18,11 @@ import java.util.List;
 public class PatioWebController {
 
     private final PatioService patioService;
+    private final MotoService motoService;
 
-    public PatioWebController(PatioService patioService) {
+    public PatioWebController(PatioService patioService, MotoService motoService) {
         this.patioService = patioService;
+        this.motoService = motoService;
     }
 
     @GetMapping
@@ -91,9 +95,31 @@ public class PatioWebController {
 
     @GetMapping("/detalhes/{id}")
     public String detalhes(@PathVariable Long id, Model model) {
-        Patio patio = patioService.buscarPorId(id);
-        model.addAttribute("patio", patio);
-        model.addAttribute("role", "USER"); // Valor padrão
-        return "patios/detalhes";
+        try {
+            Patio patio = patioService.buscarPorId(id);
+            List<Moto> motosDoPatio = motoService.listarTodos().stream()
+                    .filter(moto -> moto.getPatio() != null && moto.getPatio().getId().equals(id))
+                    .toList();
+
+            // Calcular estatísticas
+            long totalMotos = motosDoPatio.size();
+            long disponiveis = motosDoPatio.stream().filter(m -> m.getStatus().name().equals("DISPONIVEL")).count();
+            long manutencao = motosDoPatio.stream().filter(m -> m.getStatus().name().equals("MANUTENCAO")).count();
+            long problemas = motosDoPatio.stream().filter(
+                    m -> m.getStatus().name().equals("DANOS_ESTRUTURAIS") || m.getStatus().name().equals("SINISTRO"))
+                    .count();
+
+            model.addAttribute("patio", patio);
+            model.addAttribute("motos", motosDoPatio);
+            model.addAttribute("totalMotos", totalMotos);
+            model.addAttribute("disponiveis", disponiveis);
+            model.addAttribute("manutencao", manutencao);
+            model.addAttribute("problemas", problemas);
+            model.addAttribute("role", "USER"); // Valor padrão
+            return "patios/detalhes";
+        } catch (Exception e) {
+            model.addAttribute("error", "Erro ao carregar detalhes do pátio: " + e.getMessage());
+            return "redirect:/patios";
+        }
     }
 }

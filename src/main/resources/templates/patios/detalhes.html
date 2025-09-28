@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/header :: head">
+    <title>Detalhes do Pátio - MotoVision</title>
+  </head>
+  <body>
+    <div th:replace="fragments/header :: navbar"></div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-2 p-0" th:replace="fragments/menu :: sidebar"></div>
+        <div class="col-md-10">
+          <main class="p-4">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h1 class="h3 mb-0">
+                  <i class="fas fa-warehouse me-2 text-primary"></i>
+                  <span th:text="${patio.nome}">Pátio</span>
+                </h1>
+                <p class="text-muted">
+                  <i class="fas fa-map-marker-alt me-1"></i>
+                  <span th:text="${patio.endereco ?: 'Endereço não informado'}"
+                    >Endereço</span
+                  >
+                </p>
+              </div>
+              <div>
+                <a href="/patios" class="btn btn-outline-secondary">
+                  <i class="fas fa-arrow-left me-1"></i>Voltar
+                </a>
+                <a
+                  th:href="@{/patios/editar/{id}(id=${patio.id})}"
+                  class="btn btn-warning"
+                >
+                  <i class="fas fa-edit me-1"></i>Editar
+                </a>
+              </div>
+            </div>
+
+            <!-- Estatísticas do Pátio -->
+            <div class="row mb-4">
+              <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <h4 class="card-title">Total de Motos</h4>
+                        <h2 class="mb-0" th:text="${totalMotos}">0</h2>
+                      </div>
+                      <div class="align-self-center">
+                        <i class="fas fa-motorcycle fa-2x"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <h4 class="card-title">Disponíveis</h4>
+                        <h2 class="mb-0" th:text="${disponiveis}">0</h2>
+                      </div>
+                      <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-white">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <h4 class="card-title">Em Manutenção</h4>
+                        <h2 class="mb-0" th:text="${manutencao}">0</h2>
+                      </div>
+                      <div class="align-self-center">
+                        <i class="fas fa-tools fa-2x"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <div class="card bg-danger text-white">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <h4 class="card-title">Com Problemas</h4>
+                        <h2 class="mb-0" th:text="${problemas}">0</h2>
+                      </div>
+                      <div class="align-self-center">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lista de Motos do Pátio -->
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-0">
+                  <i class="fas fa-list me-2"></i>Motos no Pátio
+                </h5>
+              </div>
+              <div class="card-body">
+                <div th:if="${#lists.isEmpty(motos)}" class="text-center py-5">
+                  <i class="fas fa-motorcycle fa-3x text-muted mb-3"></i>
+                  <h5 class="text-muted">Nenhuma moto neste pátio</h5>
+                  <p class="text-muted">
+                    As motos aparecerão aqui quando forem adicionadas ao pátio.
+                  </p>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(motos)}" class="row">
+                  <div class="col-md-6 col-lg-4 mb-3" th:each="moto : ${motos}">
+                    <div class="card h-100">
+                      <div
+                        class="card-header d-flex justify-content-between align-items-center"
+                      >
+                        <h6 class="card-title mb-0">
+                          <i class="fas fa-motorcycle me-1"></i>
+                          <span th:text="${moto.modelo}">Honda CG</span>
+                        </h6>
+                        <span class="badge bg-secondary" th:text="${moto.placa}"
+                          >ABC1234</span
+                        >
+                      </div>
+                      <div class="card-body">
+                        <div class="row mb-2">
+                          <div class="col-6">
+                            <small class="text-muted">Status:</small>
+                            <div>
+                              <span
+                                th:if="${moto.status.name() == 'DISPONIVEL'}"
+                                class="badge bg-success"
+                                th:text="${moto.status.descricao}"
+                                >Disponível</span
+                              >
+                              <span
+                                th:if="${moto.status.name() == 'RESERVADA'}"
+                                class="badge bg-primary"
+                                th:text="${moto.status.descricao}"
+                                >Reservada</span
+                              >
+                              <span
+                                th:if="${moto.status.name() == 'MANUTENCAO'}"
+                                class="badge bg-warning"
+                                th:text="${moto.status.descricao}"
+                                >Manutenção</span
+                              >
+                               <span
+                                 th:if="${moto.status.name() == 'FALTA_PECA'}"
+                                 class="badge"
+                                 style="background-color: #fd7e14; color: white;"
+                                 th:text="${moto.status.descricao}"
+                                 >Falta Peça</span
+                              >
+                              <span
+                                th:if="${moto.status.name() == 'INDISPONIVEL'}"
+                                class="badge bg-secondary"
+                                th:text="${moto.status.descricao}"
+                                >Indisponível</span
+                              >
+                              <span
+                                th:if="${moto.status.name() == 'DANOS_ESTRUTURAIS'}"
+                                class="badge bg-danger"
+                                th:text="${moto.status.descricao}"
+                                >Danos Estruturais</span
+                              >
+                              <span
+                                th:if="${moto.status.name() == 'SINISTRO'}"
+                                class="badge bg-dark"
+                                th:text="${moto.status.descricao}"
+                                >Sinistro</span
+                              >
+                            </div>
+                          </div>
+                          <div class="col-6">
+                            <small class="text-muted">Setor:</small>
+                            <div th:text="${moto.setor}">Setor A</div>
+                          </div>
+                        </div>
+
+                        <div class="row mb-2">
+                          <div class="col-6">
+                            <small class="text-muted">Cor:</small>
+                            <div>
+                              <span
+                                th:if="${moto.corSetor == 'Verde'}"
+                                class="badge"
+                                style="background-color: green"
+                                th:text="${moto.corSetor}"
+                                >Verde</span
+                              >
+                              <span
+                                th:if="${moto.corSetor == 'Azul'}"
+                                class="badge"
+                                style="background-color: blue"
+                                th:text="${moto.corSetor}"
+                                >Azul</span
+                              >
+                              <span
+                                th:if="${moto.corSetor == 'Amarelo'}"
+                                class="badge"
+                                style="background-color: yellow"
+                                th:text="${moto.corSetor}"
+                                >Amarelo</span
+                              >
+                              <span
+                                th:if="${moto.corSetor == 'Laranja'}"
+                                class="badge"
+                                style="background-color: orange"
+                                th:text="${moto.corSetor}"
+                                >Laranja</span
+                              >
+                              <span
+                                th:if="${moto.corSetor == 'Cinza'}"
+                                class="badge"
+                                style="background-color: gray"
+                                th:text="${moto.corSetor}"
+                                >Cinza</span
+                              >
+                              <span
+                                th:if="${moto.corSetor == 'Vermelho'}"
+                                class="badge"
+                                style="background-color: red"
+                                th:text="${moto.corSetor}"
+                                >Vermelho</span
+                              >
+                              <span
+                                th:if="${moto.corSetor == 'Preto'}"
+                                class="badge"
+                                style="background-color: black"
+                                th:text="${moto.corSetor}"
+                                >Preto</span
+                              >
+                            </div>
+                          </div>
+                          <div class="col-6">
+                            <small class="text-muted">ID:</small>
+                            <div th:text="${moto.id}">1</div>
+                          </div>
+                        </div>
+
+                        <div class="mb-2">
+                          <small class="text-muted">Criado em:</small>
+                          <div
+                            class="small"
+                            th:text="${#temporals.format(moto.createdAt, 'dd/MM/yyyy HH:mm')}"
+                          >
+                            27/09/2025 22:21
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-footer">
+                        <div class="btn-group w-100" role="group">
+                          <a
+                            th:href="@{/motos/detalhes/{id}(id=${moto.id})}"
+                            class="btn btn-outline-info btn-sm"
+                          >
+                            <i class="fas fa-eye me-1"></i>Detalhes
+                          </a>
+                          <a
+                            th:href="@{/motos/editar/{id}(id=${moto.id})}"
+                            class="btn btn-outline-warning btn-sm"
+                          >
+                            <i class="fas fa-edit me-1"></i>Editar
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Informações do Pátio -->
+            <div class="row mt-4">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h6 class="card-title mb-0">
+                      <i class="fas fa-info-circle me-2"></i>Informações do
+                      Pátio
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">Nome:</dt>
+                      <dd class="col-sm-8" th:text="${patio.nome}">
+                        Pátio Central
+                      </dd>
+
+                      <dt class="col-sm-4">Endereço:</dt>
+                      <dd class="col-sm-8" th:text="${patio.endereco}">
+                        Rua das Flores, 123
+                      </dd>
+
+                      <dt class="col-sm-4">Criado em:</dt>
+                      <dd
+                        class="col-sm-8"
+                        th:text="${#temporals.format(patio.createdAt, 'dd/MM/yyyy HH:mm')}"
+                      >
+                        27/09/2025 22:21
+                      </dd>
+
+                      <dt class="col-sm-4">Atualizado em:</dt>
+                      <dd
+                        class="col-sm-8"
+                        th:text="${#temporals.format(patio.updatedAt, 'dd/MM/yyyy HH:mm')}"
+                      >
+                        27/09/2025 22:21
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

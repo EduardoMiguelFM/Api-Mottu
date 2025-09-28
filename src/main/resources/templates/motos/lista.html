@@ -78,25 +78,27 @@
                     </div>
                     <div class="col-md-3">
                       <label for="setor" class="form-label">Setor</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="setor"
-                        name="setor"
-                        th:value="${filtroSetor}"
-                        placeholder="Ex: Setor A"
-                      />
+                      <select class="form-select" id="setor" name="setor">
+                        <option value="">Todos os setores</option>
+                        <option
+                          th:each="setor : ${setorList}"
+                          th:value="${setor}"
+                          th:text="${setor}"
+                          th:selected="${filtroSetor == setor}"
+                        ></option>
+                      </select>
                     </div>
                     <div class="col-md-3">
                       <label for="cor" class="form-label">Cor</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="cor"
-                        name="cor"
-                        th:value="${filtroCor}"
-                        placeholder="Ex: Verde"
-                      />
+                      <select class="form-select" id="cor" name="cor">
+                        <option value="">Todas as cores</option>
+                        <option
+                          th:each="cor : ${corList}"
+                          th:value="${cor}"
+                          th:text="${cor}"
+                          th:selected="${filtroCor == cor}"
+                        ></option>
+                      </select>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
                       <button
@@ -154,29 +156,99 @@
                         </td>
                         <td>
                           <span
+                            th:if="${moto.status.name() == 'DISPONIVEL'}"
+                            class="badge bg-success"
+                            th:text="${moto.status.descricao}"
+                            >Disponível</span
+                          >
+                          <span
+                            th:if="${moto.status.name() == 'RESERVADA'}"
+                            class="badge bg-primary"
+                            th:text="${moto.status.descricao}"
+                            >Reservada</span
+                          >
+                          <span
+                            th:if="${moto.status.name() == 'MANUTENCAO'}"
+                            class="badge bg-warning"
+                            th:text="${moto.status.descricao}"
+                            >Manutenção</span
+                          >
+                          <span
+                            th:if="${moto.status.name() == 'FALTA_PECA'}"
                             class="badge"
-                            th:classappend="'bg-' + ${#strings.toLowerCase(moto.status.name()) == 'disponivel' ? 'success' : 
-                                                                        #strings.toLowerCase(moto.status.name()) == 'reservada' ? 'primary' : 
-                                                                        #strings.toLowerCase(moto.status.name()) == 'manutencao' ? 'warning' : 
-                                                                        #strings.toLowerCase(moto.status.name()) == 'falta_peca' ? 'info' : 
-                                                                        #strings.toLowerCase(moto.status.name()) == 'indisponivel' ? 'secondary' : 
-                                                                        #strings.toLowerCase(moto.status.name()) == 'danos_estruturais' ? 'danger' : 'dark'}"
-                            th:text="${moto.status}"
-                            >DISPONIVEL</span
+                            style="background-color: #fd7e14; color: white;"
+                            th:text="${moto.status.descricao}"
+                            >Falta Peça</span
+                          >
+                          <span
+                            th:if="${moto.status.name() == 'INDISPONIVEL'}"
+                            class="badge bg-secondary"
+                            th:text="${moto.status.descricao}"
+                            >Indisponível</span
+                          >
+                          <span
+                            th:if="${moto.status.name() == 'DANOS_ESTRUTURAIS'}"
+                            class="badge bg-danger"
+                            th:text="${moto.status.descricao}"
+                            >Danos Estruturais</span
+                          >
+                          <span
+                            th:if="${moto.status.name() == 'SINISTRO'}"
+                            class="badge bg-dark"
+                            th:text="${moto.status.descricao}"
+                            >Sinistro</span
                           >
                         </td>
                         <td th:text="${moto.setor}">Setor A</td>
                         <td>
                           <span
+                            th:if="${moto.corSetor == 'Verde'}"
                             class="badge"
-                            th:style="'background-color: ' + ${moto.corSetor == 'Verde' ? '#28a745' : 
-                                                                      moto.corSetor == 'Azul' ? '#007bff' : 
-                                                                      moto.corSetor == 'Amarelo' ? '#ffc107' : 
-                                                                      moto.corSetor == 'Laranja' ? '#fd7e14' : 
-                                                                      moto.corSetor == 'Cinza' ? '#6c757d' : 
-                                                                      moto.corSetor == 'Vermelho' ? '#dc3545' : '#000000'}"
+                            style="background-color: #28a745"
                             th:text="${moto.corSetor}"
                             >Verde</span
+                          >
+                          <span
+                            th:if="${moto.corSetor == 'Azul'}"
+                            class="badge"
+                            style="background-color: #007bff"
+                            th:text="${moto.corSetor}"
+                            >Azul</span
+                          >
+                          <span
+                            th:if="${moto.corSetor == 'Amarelo'}"
+                            class="badge"
+                            style="background-color: #ffc107"
+                            th:text="${moto.corSetor}"
+                            >Amarelo</span
+                          >
+                          <span
+                            th:if="${moto.corSetor == 'Laranja'}"
+                            class="badge"
+                            style="background-color: #fd7e14"
+                            th:text="${moto.corSetor}"
+                            >Laranja</span
+                          >
+                          <span
+                            th:if="${moto.corSetor == 'Cinza'}"
+                            class="badge"
+                            style="background-color: #6c757d"
+                            th:text="${moto.corSetor}"
+                            >Cinza</span
+                          >
+                          <span
+                            th:if="${moto.corSetor == 'Vermelho'}"
+                            class="badge"
+                            style="background-color: #dc3545"
+                            th:text="${moto.corSetor}"
+                            >Vermelho</span
+                          >
+                          <span
+                            th:if="${moto.corSetor == 'Preto'}"
+                            class="badge"
+                            style="background-color: #000000"
+                            th:text="${moto.corSetor}"
+                            >Preto</span
                           >
                         </td>
                         <td th:text="${moto.patio?.nome}">Pátio Butantã</td>
@@ -269,4 +341,3 @@
     </script>
   </body>
 </html>
-
