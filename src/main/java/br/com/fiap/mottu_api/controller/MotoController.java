@@ -5,6 +5,10 @@ import br.com.fiap.mottu_api.dto.MotoResponseDTO;
 import br.com.fiap.mottu_api.model.Moto;
 import br.com.fiap.mottu_api.model.StatusMoto;
 import br.com.fiap.mottu_api.service.MotoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/motos")
+@Tag(name = "Motos", description = "Endpoints para gestão de motos")
 public class MotoController {
 
     private final MotoService motoService;
@@ -24,6 +29,11 @@ public class MotoController {
     }
 
     @GetMapping("/todos")
+    @Operation(summary = "Listar todas as motos", description = "Retorna uma lista com todas as motos cadastradas")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de motos retornada com sucesso"),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado")
+    })
     public ResponseEntity<List<MotoResponseDTO>> listarTodos() {
         List<Moto> motos = motoService.listarTodos();
         List<MotoResponseDTO> dtos = motos.stream().map(motoService::toResponseDTO).toList();
@@ -54,6 +64,13 @@ public class MotoController {
     }
 
     @PostMapping
+    @Operation(summary = "Cadastrar nova moto", description = "Cadastra uma nova moto no sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Moto cadastrada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado"),
+            @ApiResponse(responseCode = "403", description = "Acesso negado")
+    })
     public ResponseEntity<MotoResponseDTO> salvar(@RequestBody @Valid MotoDTO dto) {
         Moto moto = motoService.salvar(dto);
         return ResponseEntity.status(201).body(motoService.toResponseDTO(moto));

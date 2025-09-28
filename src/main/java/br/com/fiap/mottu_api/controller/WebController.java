@@ -23,7 +23,7 @@ public class WebController {
 
     @GetMapping("/")
     public String home() {
-        return "redirect:/dashboard";
+        return "redirect:/login";
     }
 
     @GetMapping("/login")
@@ -55,17 +55,6 @@ public class WebController {
         }
     }
 
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        UsuarioPatio usuario = usuarioPatioService.buscarPorEmail(email);
-
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("role", usuario.getRole().name());
-
-        return "dashboard";
-    }
 
     @GetMapping("/logout")
     public String logout() {

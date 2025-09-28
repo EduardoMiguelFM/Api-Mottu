@@ -44,3 +44,4 @@ CREATE INDEX IF NOT EXISTS idx_moto_setor ON moto(setor);
 CREATE INDEX IF NOT EXISTS idx_moto_patio ON moto(patio_id);
 CREATE INDEX IF NOT EXISTS idx_usuario_email ON usuario_patio(email);
 CREATE INDEX IF NOT EXISTS idx_usuario_cpf ON usuario_patio(cpf);
+

@@ -27,31 +27,48 @@ API RESTful construída com **Spring Boot** para **gestão de motos, pátios e u
 - Java 21
 - Spring Boot 3.2.5
 - Spring Data JPA
+- Spring Security (Form Login)
 - Spring Validation
-- H2 Database (persistência em disco)
+- PostgreSQL Database
+- Flyway (migração de banco)
+- Thymeleaf (frontend)
 - Swagger OpenAPI 3 (springdoc)
-- Spring Cache (simulado)
-- Docker (execução em nuvem via container)
-- Azure VM Linux com Docker (DevOps)
 
 ---
 
 ## ▶️ Como Rodar
 
 ### 1. Clonar o projeto
+
 ```bash
 git clone https://github.com/seu-usuario/mottu-api.git
 cd mottu-api
 ```
 
 ### 2. Rodar localmente
+
 ```bash
 ./gradlew bootRun
 ```
 
 ### 3. Acessar
-- Swagger: http://localhost:8080/swagger-ui.html
-- H2 Console: http://localhost:8080/h2-console
+
+- **Interface Web**: http://localhost:8080/login
+- **Swagger**: http://localhost:8080/swagger-ui.html
+
+### 4. Usuários de Teste
+
+- **Admin**: admin@mottu.com.br / admin123
+- **Supervisor**: supervisor@mottu.com.br / admin123
+- **Operador**: operador@mottu.com.br / admin123
+
+### 5. Configuração do Banco
+
+Certifique-se que o PostgreSQL está rodando na porta 5432 com:
+
+- **Database**: postgres
+- **Username**: postgres
+- **Password**: dudu0602
 
 ---
 
@@ -72,22 +89,26 @@ br.com.fiap.mottu_api
 
 ## 🧠 Lógica do Setor e Cor por Status
 
-| Status             | Setor     | Cor        |
-|--------------------|-----------|------------|
-| DISPONIVEL         | Setor A   | Verde      |
-| RESERVADA          | Setor B   | Azul       |
-| MANUTENCAO         | Setor C   | Amarelo    |
-| FALTA_PECA         | Setor D   | Laranja    |
-| INDISPONIVEL       | Setor E   | Cinza      |
-| DANOS_ESTRUTURAIS  | Setor F   | Vermelho   |
-| SINISTRO           | Setor G   | Preto      |
+| Status            | Setor   | Cor      |
+| ----------------- | ------- | -------- |
+| DISPONIVEL        | Setor A | Verde    |
+| RESERVADA         | Setor B | Azul     |
+| MANUTENCAO        | Setor C | Amarelo  |
+| FALTA_PECA        | Setor D | Laranja  |
+| INDISPONIVEL      | Setor E | Cinza    |
+| DANOS_ESTRUTURAIS | Setor F | Vermelho |
+| SINISTRO          | Setor G | Preto    |
 
 ---
 
+---
+
+---
 
 ## 📌 Exemplos de Endpoints
 
 ### 🔄 MotoController
+
 - `GET /api/motos` → Lista todas as motos cadastradas
 - `GET /api/motos/id/{id}` → Retorna os detalhes de uma moto pelo ID
 - `GET /api/motos/placa/{placa}` → Retorna os detalhes de uma moto pela placa
@@ -96,6 +117,7 @@ br.com.fiap.mottu_api
 - `GET /api/patios/setor/{setor}/contagem` → Retorna a quantidade de motos por setor
 - `GET /api/patios/moto/{placa}/status` → Retorna o status individual da moto, setor e cor
 - `POST /api/motos` → Cadastra uma nova moto
+
 ```json
 {
   "modelo": "Honda Biz",
@@ -104,24 +126,30 @@ br.com.fiap.mottu_api
   "nomePatio": "Pátio Butantã"
 }
 ```
+
 - `PUT /api/motos/id/{id}` → Atualiza uma moto pelo ID
 - `PUT /api/motos/placa/{placa}` → Atualiza uma moto pela placa
 - `DELETE /api/motos/id/{id}` → Remove uma moto pelo ID
 - `DELETE /api/motos/placa/{placa}` → Remove uma moto pela placa
 
 ### 🏢 PatioController
+
 - `GET /api/patios` → Lista todos os pátios cadastrados
 - `POST /api/patios` → Cadastra um novo pátio
+
 ```json
 {
   "nomePatio": "Pátio Butantã"
 }
 ```
+
 - `GET /api/patios/status` → Retorna um resumo geral do status das motos no pátio
 
 ### 👷 Usuário de Pátio
+
 - `GET /api/usuarios` → Lista todos os usuários cadastrados
 - `POST /api/usuarios/cadastro` → Realiza o cadastro de um novo usuário
+
 ```json
 {
   "nome": "Carlos Junior",
@@ -131,16 +159,18 @@ br.com.fiap.mottu_api
   "funcao": "Supervisora"
 }
 ```
+
 - `POST /api/usuarios/login?email=&senha=` → Realiza o login de um usuário por e-mail e senha
+
 ```json
 {
   "email": "carlos@mottu.com.br",
   "senha": "senha123"
 }
 ```
+
 - `GET /api/usuarios/{id}` → Retorna os dados de um usuário pelo ID
 - `DELETE /api/usuarios/{id}` → Exclui um usuário pelo ID
-
 
 ---
 

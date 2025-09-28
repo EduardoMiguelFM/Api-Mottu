@@ -15,7 +15,7 @@
             <a
               class="nav-link"
               href="/dashboard"
-              th:classappend="${#httpServletRequest.requestURI == '/dashboard'} ? 'active' : ''"
+              th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/dashboard'} ? 'active' : ''"
             >
               <i class="fas fa-home me-2"></i>Dashboard
             </a>
@@ -24,7 +24,7 @@
             <a
               class="nav-link"
               href="/motos"
-              th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/motos')} ? 'active' : ''"
+              th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/motos')} ? 'active' : ''"
             >
               <i class="fas fa-motorcycle me-2"></i>Motos
             </a>
@@ -33,31 +33,28 @@
             <a
               class="nav-link"
               href="/patios"
-              th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/patios')} ? 'active' : ''"
+              th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/patios')} ? 'active' : ''"
             >
               <i class="fas fa-warehouse me-2"></i>Pátios
             </a>
           </li>
-          <li
-            class="nav-item mb-2"
-            th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
-          >
+          <li class="nav-item mb-2" th:if="${role == 'ADMIN'}">
             <a
               class="nav-link"
               href="/admin"
-              th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/admin')} ? 'active' : ''"
+              th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/admin')} ? 'active' : ''"
             >
               <i class="fas fa-cog me-2"></i>Administração
             </a>
           </li>
           <li
             class="nav-item mb-2"
-            th:if="${#authorization.expression('hasAnyRole(''ADMIN'', ''SUPERVISOR'')')}"
+            th:if="${role == 'ADMIN' or role == 'SUPERVISOR'}"
           >
             <a
               class="nav-link"
               href="/supervisor"
-              th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/supervisor')} ? 'active' : ''"
+              th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/supervisor')} ? 'active' : ''"
             >
               <i class="fas fa-chart-line me-2"></i>Relatórios
             </a>

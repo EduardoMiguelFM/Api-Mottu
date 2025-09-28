@@ -1,7 +1,6 @@
 package br.com.fiap.mottu_api.controller;
 
 import br.com.fiap.mottu_api.model.Moto;
-import br.com.fiap.mottu_api.model.Patio;
 import br.com.fiap.mottu_api.model.StatusMoto;
 import br.com.fiap.mottu_api.service.MotoService;
 import br.com.fiap.mottu_api.service.PatioService;
@@ -45,6 +44,7 @@ public class MotoWebController {
         model.addAttribute("filtroStatus", status);
         model.addAttribute("filtroSetor", setor);
         model.addAttribute("filtroCor", cor);
+        model.addAttribute("role", "USER"); // Valor padrão
 
         return "motos/lista";
     }
@@ -54,6 +54,7 @@ public class MotoWebController {
         model.addAttribute("moto", new Moto());
         model.addAttribute("patios", patioService.listarTodos());
         model.addAttribute("statusList", StatusMoto.values());
+        model.addAttribute("role", "USER"); // Valor padrão
         return "motos/formulario";
     }
 
@@ -63,6 +64,7 @@ public class MotoWebController {
         model.addAttribute("moto", moto);
         model.addAttribute("patios", patioService.listarTodos());
         model.addAttribute("statusList", StatusMoto.values());
+        model.addAttribute("role", "USER"); // Valor padrão
         return "motos/formulario";
     }
 
@@ -121,6 +123,7 @@ public class MotoWebController {
     public String detalhes(@PathVariable Long id, Model model) {
         Moto moto = motoService.buscarPorId(id);
         model.addAttribute("moto", moto);
+        model.addAttribute("role", "USER"); // Valor padrão
         return "motos/detalhes";
     }
 

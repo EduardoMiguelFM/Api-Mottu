@@ -66,6 +66,17 @@
                                             </div>
                                         </div>
                                         
+                                        <div class="mb-3">
+                                            <label for="endereco" class="form-label">
+                                                <i class="fas fa-map-marker-alt me-1"></i>Endereço *
+                                            </label>
+                                            <input type="text" class="form-control" id="endereco" th:field="*{endereco}" 
+                                                   placeholder="Ex: Rua das Flores, 123" required>
+                                            <div th:if="${#fields.hasErrors('endereco')}" class="text-danger">
+                                                <small th:errors="*{endereco}"></small>
+                                            </div>
+                                        </div>
+                                        
                                         <div class="d-flex justify-content-between">
                                             <a href="/patios" class="btn btn-secondary">
                                                 <i class="fas fa-times me-2"></i>Cancelar
@@ -127,3 +138,4 @@
     <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
+

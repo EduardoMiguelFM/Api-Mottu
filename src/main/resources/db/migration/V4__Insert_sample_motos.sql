@@ -13,3 +13,4 @@ INSERT INTO moto (modelo, placa, status, setor, cor_setor, patio_id) VALUES
 ('Honda XRE 300', 'YZA3456', 'RESERVADA', 'Setor B', 'Azul', 5),
 ('Yamaha R3', 'BCD7890', 'MANUTENCAO', 'Setor C', 'Amarelo', 5)
 ON CONFLICT (placa) DO NOTHING;
+

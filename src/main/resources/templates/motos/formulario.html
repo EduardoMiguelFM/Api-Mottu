@@ -113,6 +113,19 @@
                                             </div>
                                         </div>
                                         
+                                        <div class="row">
+                                            <div class="col-md-12 mb-3">
+                                                <label for="endereco" class="form-label">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>Endereço
+                                                </label>
+                                                <input type="text" class="form-control" id="endereco" th:field="*{endereco}" 
+                                                       placeholder="Ex: Rua das Flores, 123">
+                                                <div th:if="${#fields.hasErrors('endereco')}" class="text-danger">
+                                                    <small th:errors="*{endereco}"></small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                         <!-- Campos de Setor e Cor (readonly) -->
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
@@ -223,6 +236,22 @@
             } else {
                 setorField.value = '';
                 corField.value = '';
+            }
+        });
+        
+        // Validação de placa
+        document.getElementById('placa').addEventListener('input', function() {
+            const placa = this.value.toUpperCase();
+            this.value = placa;
+            
+            // Validação básica de formato de placa
+            if (placa.length > 0) {
+                const placaRegex = /^[A-Z]{3}[0-9]{4}$/;
+                if (!placaRegex.test(placa)) {
+                    this.setCustomValidity('Formato de placa inválido. Use o formato ABC1234');
+                } else {
+                    this.setCustomValidity('');
+                }
             }
         });
         

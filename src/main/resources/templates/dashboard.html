@@ -49,13 +49,13 @@
                 </h1>
                 <p class="text-muted">
                   Bem-vindo ao sistema MotoVision,
-                  <span th:text="${usuario?.nome}">Usuário</span>!
+                  <span th:text="${usuario?.nome ?: 'Usuário'}">Usuário</span>!
                 </p>
               </div>
               <div class="text-end">
                 <span
                   class="badge bg-primary fs-6"
-                  th:text="${usuario?.role?.descricao}"
+                  th:text="${usuario?.role?.descricao ?: 'Usuário'}"
                   >Usuário</span
                 >
               </div>
@@ -69,7 +69,7 @@
                     <div class="d-flex justify-content-between">
                       <div>
                         <h4 class="card-title">Total de Motos</h4>
-                        <h2 class="mb-0">0</h2>
+                        <h2 class="mb-0" th:text="${totalMotos}">0</h2>
                       </div>
                       <div class="align-self-center">
                         <i class="fas fa-motorcycle fa-2x"></i>
@@ -117,7 +117,7 @@
                     <div class="d-flex justify-content-between">
                       <div>
                         <h4 class="card-title">Pátios</h4>
-                        <h2 class="mb-0">0</h2>
+                        <h2 class="mb-0" th:text="${totalPatios}">0</h2>
                       </div>
                       <div class="align-self-center">
                         <i class="fas fa-warehouse fa-2x"></i>
@@ -189,6 +189,85 @@
                           <div class="text-muted">Danos</div>
                           <div class="h4 text-danger">0</div>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Seção de Motos e Pátios Recentes -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title mb-0">
+                      <i class="fas fa-motorcycle me-2"></i>Motos Recentes
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div
+                      th:if="${#lists.isEmpty(motosRecentes)}"
+                      class="text-center text-muted"
+                    >
+                      <i class="fas fa-info-circle me-2"></i>
+                      Nenhuma moto cadastrada ainda.
+                    </div>
+                    <div
+                      th:unless="${#lists.isEmpty(motosRecentes)}"
+                      class="list-group list-group-flush"
+                    >
+                      <div
+                        th:each="moto : ${motosRecentes}"
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <div>
+                          <strong th:text="${moto.placa}">ABC-1234</strong>
+                          <br />
+                          <small class="text-muted" th:text="${moto.modelo}"
+                            >Modelo</small
+                          >
+                        </div>
+                        <span class="badge bg-primary" th:text="${moto.status}"
+                          >DISPONIVEL</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title mb-0">
+                      <i class="fas fa-warehouse me-2"></i>Pátios Ativos
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div
+                      th:if="${#lists.isEmpty(patiosRecentes)}"
+                      class="text-center text-muted"
+                    >
+                      <i class="fas fa-info-circle me-2"></i>
+                      Nenhum pátio cadastrado ainda.
+                    </div>
+                    <div
+                      th:unless="${#lists.isEmpty(patiosRecentes)}"
+                      class="list-group list-group-flush"
+                    >
+                      <div
+                        th:each="patio : ${patiosRecentes}"
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <div>
+                          <strong th:text="${patio.nome}">Nome do Pátio</strong>
+                          <br />
+                          <small class="text-muted" th:text="${patio.endereco}"
+                            >Endereço</small
+                          >
+                        </div>
+                        <span class="badge bg-success">Ativo</span>
                       </div>
                     </div>
                   </div>

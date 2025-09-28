@@ -8,3 +8,4 @@ INSERT INTO patio (nome) VALUES
 ('Pátio Centro'),
 ('Pátio Zona Sul')
 ON CONFLICT DO NOTHING;
+

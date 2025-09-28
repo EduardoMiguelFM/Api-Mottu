@@ -25,12 +25,14 @@ public class PatioWebController {
     public String listarPatios(Model model) {
         List<Patio> patios = patioService.listarTodos();
         model.addAttribute("patios", patios);
+        model.addAttribute("role", "USER"); // Valor padrão
         return "patios/lista";
     }
 
     @GetMapping("/novo")
     public String novoFormulario(Model model) {
         model.addAttribute("patio", new Patio());
+        model.addAttribute("role", "USER"); // Valor padrão
         return "patios/formulario";
     }
 
@@ -38,6 +40,7 @@ public class PatioWebController {
     public String editarFormulario(@PathVariable Long id, Model model) {
         Patio patio = patioService.buscarPorId(id);
         model.addAttribute("patio", patio);
+        model.addAttribute("role", "USER"); // Valor padrão
         return "patios/formulario";
     }
 
@@ -90,6 +93,7 @@ public class PatioWebController {
     public String detalhes(@PathVariable Long id, Model model) {
         Patio patio = patioService.buscarPorId(id);
         model.addAttribute("patio", patio);
+        model.addAttribute("role", "USER"); // Valor padrão
         return "patios/detalhes";
     }
 }

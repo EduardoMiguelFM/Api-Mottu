@@ -17,21 +17,18 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final UsuarioPatioService usuarioPatioService;
+    private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(UsuarioPatioService usuarioPatioService) {
+    public SecurityConfig(UsuarioPatioService usuarioPatioService, PasswordEncoder passwordEncoder) {
         this.usuarioPatioService = usuarioPatioService;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(usuarioPatioService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
 
@@ -46,14 +43,22 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // Páginas públicas
                         .requestMatchers("/", "/login", "/cadastro", "/css/**", "/js/**", "/images/**").permitAll()
+
                         // API pública para Swagger
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
                         // Rotas administrativas
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
+
                         // Rotas de supervisor
-                        .requestMatchers("/supervisor/**").hasAnyRole("ADMIN", "SUPERVISOR")
-                        // Rotas de usuário comum
-                        .requestMatchers("/motos/**", "/patios/**").hasAnyRole("ADMIN", "SUPERVISOR", "USER")
+                        .requestMatchers("/supervisor/**", "/api/supervisor/**").hasAnyRole("ADMIN", "SUPERVISOR")
+
+                        // Dashboard e rotas de usuário comum
+                        .requestMatchers("/dashboard").hasAnyRole("ADMIN", "SUPERVISOR", "USER")
+                        .requestMatchers("/motos/**", "/patios/**", "/api/motos/**", "/api/patios/**")
+                        .hasAnyRole("ADMIN", "SUPERVISOR", "USER")
+                        .requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN", "SUPERVISOR", "USER")
+
                         // Todas as outras requisições precisam de autenticação
                         .anyRequest().authenticated())
                 .formLogin(form -> form
@@ -67,9 +72,6 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll())
-                .sessionManagement(session -> session
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(false))
                 .authenticationProvider(authenticationProvider());
 
         return http.build();
