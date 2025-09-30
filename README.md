@@ -8,31 +8,37 @@ API RESTful construída com **Spring Boot** para **gestão de motos, pátios e u
 
 ## 🔧 Funcionalidades
 
-- ✅ Cadastro e gerenciamento de **motos**
-- ✅ Cadastro e gerenciamento de **pátios**
-- ✅ Cadastro e **autenticação de usuários de pátio**
+- ✅ Cadastro e gerenciamento de **motos** com DTOs estruturados
+- ✅ Cadastro e gerenciamento de **pátios** com endereços
+- ✅ Cadastro e **autenticação de usuários de pátio** com Spring Security
 - ✅ Relacionamento entre entidades (Moto ↔ Pátio)
-- 🔍 Filtros por status, setor e cor
-- 🔍 Contagem de motos por setor
+- 🔍 Filtros avançados por status, setor e cor
+- 🔍 Contagem de motos por setor específico
 - 🔍 Status geral do pátio por tipo de ocorrência
+- 🔍 Status individual de motos por placa
 - 🛠 Atualização e remoção por **ID ou placa**
+- 🌐 Interface web completa com Thymeleaf
+- 📊 Dashboard administrativo
 - 🧭 Regras automáticas:
-  - Status define **setor** e **cor**
+  - Status define **setor** e **cor** automaticamente
   - Ex: `DISPONIVEL` → `Setor A` / `Verde`
 
 ---
 
 ## 🧪 Tecnologias Utilizadas
 
-- Java 21
-- Spring Boot 3.2.5
-- Spring Data JPA
-- Spring Security (Form Login)
-- Spring Validation
-- PostgreSQL Database
-- Flyway (migração de banco)
-- Thymeleaf (frontend)
-- Swagger OpenAPI 3 (springdoc)
+- **Java 21** - Linguagem de programação
+- **Spring Boot 3.2.5** - Framework principal
+- **Spring Data JPA** - Persistência de dados
+- **Spring Security 6** - Autenticação e autorização (Form Login)
+- **Spring Validation** - Validação de dados
+- **PostgreSQL** - Banco de dados principal
+- **Flyway** - Migração e versionamento de banco
+- **Thymeleaf** - Engine de templates para frontend
+- **Swagger OpenAPI 3** (springdoc 2.5.0) - Documentação da API
+- **ModelMapper 3.2.0** - Mapeamento entre DTOs e entidades
+- **Jackson** - Serialização JSON
+- **Docker** - Containerização da aplicação
 
 ---
 
@@ -51,18 +57,29 @@ cd mottu-api
 ./gradlew bootRun
 ```
 
-### 3. Acessar
+### 3. Rodar com Docker
+
+```bash
+# Build da imagem
+docker build -t mottu-api .
+
+# Executar container
+docker run -p 8080:8080 mottu-api
+```
+
+### 4. Acessar
 
 - **Interface Web**: http://localhost:8080/login
-- **Swagger**: http://localhost:8080/swagger-ui.html
+- **Swagger/OpenAPI**: http://localhost:8080/swagger-ui.html
+- **API Docs JSON**: http://localhost:8080/v3/api-docs
 
-### 4. Usuários de Teste
+### 5. Usuários de Teste
 
 - **Admin**: admin@mottu.com.br / admin123
 - **Supervisor**: supervisor@mottu.com.br / admin123
 - **Operador**: operador@mottu.com.br / admin123
 
-### 5. Configuração do Banco
+### 6. Configuração do Banco
 
 Certifique-se que o PostgreSQL está rodando na porta 5432 com:
 
@@ -70,19 +87,57 @@ Certifique-se que o PostgreSQL está rodando na porta 5432 com:
 - **Username**: postgres
 - **Password**: dudu0602
 
+**Nota**: O projeto utiliza Flyway para migração automática do banco de dados. As tabelas e dados iniciais são criados automaticamente na primeira execução.
+
 ---
 
 ## 📁 Estrutura de Pastas
 
 ```
-br.com.fiap.mottu_api
-├── controller
-├── dto
-├── model
-├── repository
-├── service
-├── exception
+src/main/java/br/com/fiap/mottu_api/
+├── controller/           # Controllers REST e Web
+│   ├── MotoController.java
+│   ├── MotoWebController.java
+│   ├── PatioController.java
+│   ├── PatioWebController.java
+│   ├── UsuarioPatioController.java
+│   └── WebController.java
+├── dto/                  # Data Transfer Objects
+│   ├── MotoDTO.java
+│   └── MotoResponseDTO.java
+├── model/                # Entidades JPA
+│   ├── Moto.java
+│   ├── Patio.java
+│   ├── UsuarioPatio.java
+│   └── StatusMoto.java
+├── repository/           # Repositories JPA
+│   ├── MotoRepository.java
+│   ├── PatioRepository.java
+│   └── UsuarioPatioRepository.java
+├── service/              # Lógica de negócio
+│   ├── MotoService.java
+│   ├── PatioService.java
+│   └── UsuarioPatioService.java
+├── config/               # Configurações
+│   └── SecurityConfig.java
+├── exception/            # Tratamento de exceções
+│   └── GlobalExceptionHandler.java
 └── MottuApiApplication.java
+
+src/main/resources/
+├── application.properties
+├── db/migration/         # Scripts Flyway
+│   ├── V1__Create_tables.sql
+│   ├── V2__Insert_initial_patios.sql
+│   ├── V3__Insert_initial_users.sql
+│   ├── V4__Insert_sample_motos.sql
+│   └── ... (outras migrações)
+└── templates/            # Templates Thymeleaf
+    ├── layout.html
+    ├── login.html
+    ├── dashboard.html
+    ├── motos/
+    └── patios/
 ```
 
 ---
@@ -101,7 +156,31 @@ br.com.fiap.mottu_api
 
 ---
 
----
+## 🔄 Funcionalidades Avançadas
+
+### 🎯 Sistema de Status Inteligente
+
+- **Atualização automática**: Status da moto define automaticamente setor e cor
+- **Validação de dados**: Campos obrigatórios e formatos validados
+- **Relacionamentos**: Integridade referencial entre motos e pátios
+
+### 📊 Relatórios e Consultas
+
+- **Contagem por setor**: Quantidade de motos em cada setor
+- **Status geral**: Resumo de todas as motos por status
+- **Filtros avançados**: Busca por múltiplos critérios simultaneamente
+
+### 🔐 Segurança
+
+- **Spring Security**: Autenticação baseada em formulário
+- **Controle de acesso**: Diferentes perfis de usuário
+- **Validação de entrada**: Prevenção de ataques de injeção
+
+### 🚀 Performance
+
+- **Cache habilitado**: Melhora performance de consultas frequentes
+- **DTOs otimizados**: Transferência eficiente de dados
+- **Paginação**: Preparado para grandes volumes de dados
 
 ---
 
@@ -109,13 +188,13 @@ br.com.fiap.mottu_api
 
 ### 🔄 MotoController
 
-- `GET /api/motos` → Lista todas as motos cadastradas
+- `GET /api/motos/todos` → Lista todas as motos cadastradas (com DTOs)
 - `GET /api/motos/id/{id}` → Retorna os detalhes de uma moto pelo ID
 - `GET /api/motos/placa/{placa}` → Retorna os detalhes de uma moto pela placa
 - `GET /api/motos/status?status=DISPONIVEL` → Lista todas as motos com status específico
 - `GET /api/motos/filtro?status=&setor=&cor=` → Permite filtrar motos por status, setor e cor
-- `GET /api/patios/setor/{setor}/contagem` → Retorna a quantidade de motos por setor
-- `GET /api/patios/moto/{placa}/status` → Retorna o status individual da moto, setor e cor
+- `GET /api/motos/patio/setor/{setor}/contagem` → Retorna a quantidade de motos por setor
+- `GET /api/motos/patio/moto/{placa}/status` → Retorna o status individual da moto, setor e cor
 - `POST /api/motos` → Cadastra uma nova moto
 
 ```json
@@ -139,7 +218,8 @@ br.com.fiap.mottu_api
 
 ```json
 {
-  "nomePatio": "Pátio Butantã"
+  "nome": "Pátio Butantã",
+  "endereco": "Rua das Flores, 123 - Butantã, São Paulo - SP"
 }
 ```
 
@@ -148,29 +228,31 @@ br.com.fiap.mottu_api
 ### 👷 Usuário de Pátio
 
 - `GET /api/usuarios` → Lista todos os usuários cadastrados
-- `POST /api/usuarios/cadastro` → Realiza o cadastro de um novo usuário
-
-```json
-{
-  "nome": "Carlos Junior",
-  "email": "carlos@mottu.com.br",
-  "senha": "senha123",
-  "cpf": "46608272761",
-  "funcao": "Supervisora"
-}
-```
-
-- `POST /api/usuarios/login?email=&senha=` → Realiza o login de um usuário por e-mail e senha
-
-```json
-{
-  "email": "carlos@mottu.com.br",
-  "senha": "senha123"
-}
-```
-
 - `GET /api/usuarios/{id}` → Retorna os dados de um usuário pelo ID
 - `DELETE /api/usuarios/{id}` → Exclui um usuário pelo ID
+
+**Cadastro via Interface Web:**
+
+- `GET /cadastro` → Página de cadastro de usuário
+- `POST /cadastro` → Processa o cadastro de novo usuário
+
+**Login via Interface Web:**
+
+- `GET /login` → Página de login
+- `POST /login` → Processa o login do usuário
+
+### 🌐 Interface Web (Thymeleaf)
+
+- `GET /` → Redireciona para login
+- `GET /login` → Página de login
+- `GET /cadastro` → Página de cadastro
+- `GET /dashboard` → Dashboard principal (após login)
+- `GET /motos` → Lista de motos
+- `GET /motos/novo` → Formulário de nova moto
+- `GET /motos/{id}` → Detalhes da moto
+- `GET /patios` → Lista de pátios
+- `GET /patios/novo` → Formulário de novo pátio
+- `GET /patios/{id}` → Detalhes do pátio
 
 ---
 
@@ -178,3 +260,4 @@ br.com.fiap.mottu_api
 
 - Eduardo Miguel Forato Monteiro – RM 555871
 - Cícero Gabriel Oliveira Serafim – RM 556996
+- Murillo Ari Ferreira Sant'Anna – RM 557183
