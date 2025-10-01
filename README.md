@@ -44,20 +44,40 @@ API RESTful construída com **Spring Boot** para **gestão de motos, pátios e u
 
 ## ▶️ Como Rodar
 
-### 1. Clonar o projeto
+### 🏠 **Execução Local**
+
+#### 1. Clonar o projeto
 
 ```bash
 git clone https://github.com/seu-usuario/mottu-api.git
 cd mottu-api
 ```
 
-### 2. Rodar localmente
+#### 2. Configurar banco PostgreSQL local
+
+Certifique-se que o PostgreSQL está rodando na porta 5432 com:
+
+- **Database**: postgres
+- **Username**: postgres
+- **Password**: dudu0602
+
+#### 3. Executar localmente
 
 ```bash
+# Build da aplicação
+./gradlew build
+
+# Executar
 ./gradlew bootRun
 ```
 
-### 3. Rodar com Docker
+#### 4. Acessar
+
+- **Interface Web**: http://localhost:8080/login
+- **Swagger/OpenAPI**: http://localhost:8080/swagger-ui.html
+- **API Docs JSON**: http://localhost:8080/v3/api-docs
+
+### 🐳 **Execução com Docker**
 
 ```bash
 # Build da imagem
@@ -67,25 +87,57 @@ docker build -t mottu-api .
 docker run -p 8080:8080 mottu-api
 ```
 
-### 4. Acessar
+### ☁️ **Deploy no Azure (App Service + PostgreSQL)**
 
-- **Interface Web**: http://localhost:8080/login
-- **Swagger/OpenAPI**: http://localhost:8080/swagger-ui.html
-- **API Docs JSON**: http://localhost:8080/v3/api-docs
+#### 1. Pré-requisitos
 
-### 5. Usuários de Teste
+- Azure CLI instalado e configurado
+- Conta Azure ativa
+- Java 11+ instalado
+
+#### 2. Criar recursos Azure
+
+```bash
+# Tornar scripts executáveis
+chmod +x scripts/*.sh
+
+# Criar recursos no Azure
+./scripts/deploy-azure.sh
+```
+
+#### 3. Build e Deploy
+
+```bash
+# Build da aplicação
+./scripts/build.sh
+
+# Deploy para Azure
+./scripts/deploy-jar.sh
+```
+
+#### 4. Testar aplicação
+
+```bash
+# Executar testes automatizados
+./scripts/test-api.sh
+```
+
+#### 5. Acessar aplicação na nuvem
+
+- **API**: https://mottu-api-fiap.azurewebsites.net
+- **Swagger**: https://mottu-api-fiap.azurewebsites.net/swagger-ui.html
+- **Interface Web**: https://mottu-api-fiap.azurewebsites.net/login
+
+### 👥 **Usuários de Teste**
 
 - **Admin**: admin@mottu.com.br / admin123
 - **Supervisor**: supervisor@mottu.com.br / admin123
 - **Operador**: operador@mottu.com.br / admin123
 
-### 6. Configuração do Banco
+### 📊 **Banco de Dados**
 
-Certifique-se que o PostgreSQL está rodando na porta 5432 com:
-
-- **Database**: postgres
-- **Username**: postgres
-- **Password**: dudu0602
+**Local**: PostgreSQL na porta 5432
+**Nuvem**: Azure Database for PostgreSQL (configurado automaticamente)
 
 **Nota**: O projeto utiliza Flyway para migração automática do banco de dados. As tabelas e dados iniciais são criados automaticamente na primeira execução.
 
@@ -94,50 +146,61 @@ Certifique-se que o PostgreSQL está rodando na porta 5432 com:
 ## 📁 Estrutura de Pastas
 
 ```
-src/main/java/br/com/fiap/mottu_api/
-├── controller/           # Controllers REST e Web
-│   ├── MotoController.java
-│   ├── MotoWebController.java
-│   ├── PatioController.java
-│   ├── PatioWebController.java
-│   ├── UsuarioPatioController.java
-│   └── WebController.java
-├── dto/                  # Data Transfer Objects
-│   ├── MotoDTO.java
-│   └── MotoResponseDTO.java
-├── model/                # Entidades JPA
-│   ├── Moto.java
-│   ├── Patio.java
-│   ├── UsuarioPatio.java
-│   └── StatusMoto.java
-├── repository/           # Repositories JPA
-│   ├── MotoRepository.java
-│   ├── PatioRepository.java
-│   └── UsuarioPatioRepository.java
-├── service/              # Lógica de negócio
-│   ├── MotoService.java
-│   ├── PatioService.java
-│   └── UsuarioPatioService.java
-├── config/               # Configurações
-│   └── SecurityConfig.java
-├── exception/            # Tratamento de exceções
-│   └── GlobalExceptionHandler.java
-└── MottuApiApplication.java
-
-src/main/resources/
-├── application.properties
-├── db/migration/         # Scripts Flyway
-│   ├── V1__Create_tables.sql
-│   ├── V2__Insert_initial_patios.sql
-│   ├── V3__Insert_initial_users.sql
-│   ├── V4__Insert_sample_motos.sql
-│   └── ... (outras migrações)
-└── templates/            # Templates Thymeleaf
-    ├── layout.html
-    ├── login.html
-    ├── dashboard.html
-    ├── motos/
-    └── patios/
+mottu-api/
+├── src/main/java/br/com/fiap/mottu_api/
+│   ├── controller/           # Controllers REST e Web
+│   │   ├── MotoController.java
+│   │   ├── MotoWebController.java
+│   │   ├── PatioController.java
+│   │   ├── PatioWebController.java
+│   │   ├── UsuarioPatioController.java
+│   │   └── WebController.java
+│   ├── dto/                  # Data Transfer Objects
+│   │   ├── MotoDTO.java
+│   │   └── MotoResponseDTO.java
+│   ├── model/                # Entidades JPA
+│   │   ├── Moto.java
+│   │   ├── Patio.java
+│   │   ├── UsuarioPatio.java
+│   │   └── StatusMoto.java
+│   ├── repository/           # Repositories JPA
+│   │   ├── MotoRepository.java
+│   │   ├── PatioRepository.java
+│   │   └── UsuarioPatioRepository.java
+│   ├── service/              # Lógica de negócio
+│   │   ├── MotoService.java
+│   │   ├── PatioService.java
+│   │   └── UsuarioPatioService.java
+│   ├── config/               # Configurações
+│   │   └── SecurityConfig.java
+│   ├── exception/            # Tratamento de exceções
+│   │   └── GlobalExceptionHandler.java
+│   └── MottuApiApplication.java
+├── src/main/resources/
+│   ├── application.properties        # Configurações locais
+│   ├── application-cloud.properties  # Configurações Azure
+│   ├── db/migration/                 # Scripts Flyway
+│   │   ├── V1__Create_tables.sql
+│   │   ├── V2__Insert_initial_patios.sql
+│   │   ├── V3__Insert_initial_users.sql
+│   │   ├── V4__Insert_sample_motos.sql
+│   │   └── ... (outras migrações)
+│   └── templates/                    # Templates Thymeleaf
+│       ├── layout.html
+│       ├── login.html
+│       ├── dashboard.html
+│       ├── motos/
+│       └── patios/
+├── scripts/                          # Scripts de deploy e teste
+│   ├── deploy-azure.sh              # Criar recursos Azure
+│   ├── build.sh                     # Build da aplicação
+│   ├── deploy-jar.sh                # Deploy para Azure
+│   ├── test-api.sh                  # Testes automatizados
+│   └── script_bd.sql                # Script do banco
+├── .deployment                       # Configuração Azure
+├── Dockerfile                        # Container Docker
+├── build.gradle                      # Dependências Gradle
+└── README.md                         # Documentação
 ```
 
 ---
@@ -256,8 +319,47 @@ src/main/resources/
 
 ---
 
+## ☁️ **Deploy na Nuvem - DevOps**
+
+### **Recursos Azure Utilizados:**
+
+- **App Service**: Hospedagem da aplicação Spring Boot
+- **Azure Database for PostgreSQL**: Banco de dados gerenciado
+- **Azure CLI**: Automação da criação de recursos
+
+### **Arquitetura de Deploy:**
+
+```
+GitHub → Azure CLI → App Service ← PostgreSQL
+                    ↓
+              Aplicação Spring Boot
+```
+
+### **Scripts de Automação:**
+
+- `scripts/deploy-azure.sh` - Criação de recursos Azure
+- `scripts/build.sh` - Build da aplicação
+- `scripts/deploy-jar.sh` - Deploy para App Service
+- `scripts/test-api.sh` - Testes automatizados
+
+### **Configurações:**
+
+- **Profile Cloud**: `application-cloud.properties`
+- **Connection String**: Configurada automaticamente
+- **Variáveis de Ambiente**: DB_USERNAME, DB_PASSWORD, SPRING_PROFILES_ACTIVE
+
+---
+
 ## 👥 Equipe
 
 - Eduardo Miguel Forato Monteiro – RM 555871
 - Cícero Gabriel Oliveira Serafim – RM 556996
 - Murillo Ari Ferreira Sant'Anna – RM 557183
+
+---
+
+## 📚 **Disciplinas Integradas**
+
+- **JAVA ADVANCED**: API RESTful com Spring Boot
+- **MOBILE APPLICATION DEVELOPMENT**: Integração com aplicativo mobile
+- **DEVOPS TOOLS & CLOUD COMPUTING**: Deploy no Azure App Service
