@@ -1,146 +1,365 @@
-# 🏍️ MotoVision API - Azure App Service
+# MotoVision API 🚀
 
-## 📋 Descrição da Solução
+### Projeto desenvolvido para o Challenge FIAP 2025 (2º ano ADS)
 
-A **MotoVision API** é uma aplicação Java Spring Boot desenvolvida para gestão completa de motos, pátios e usuários. O sistema permite:
-
-- **Gestão de Motos**: CRUD completo com controle de status, localização e manutenção
-- **Gestão de Pátios**: Administração de locais de estacionamento com endereços
-- **Gestão de Usuários**: Sistema de autenticação e autorização
-- **Relatórios e Estatísticas**: Dashboards com métricas operacionais
-- **API REST**: Endpoints documentados com Swagger UI
-
-## 💼 Benefícios para o Negócio
-
-### **Problemas Resolvidos:**
-
-- **Controle de Frota**: Rastreamento em tempo real de todas as motos
-- **Otimização de Espaço**: Gestão eficiente de pátios e setores
-- **Redução de Perdas**: Controle de status previne extravios
-- **Automação de Processos**: Reduz trabalho manual e erros
-- **Escalabilidade**: Suporte a crescimento da operação
-
-### **Melhorias Implementadas:**
-
-- **Disponibilidade 99.9%**: Hospedagem na nuvem Azure
-- **Performance**: Banco PostgreSQL otimizado
-- **Segurança**: Autenticação e autorização robustas
-- **Monitoramento**: Logs e métricas em tempo real
-- **Manutenibilidade**: Código limpo e documentado
-
-## 🚀 Deploy no Azure
-
-### **Pré-requisitos:**
-
-- Azure CLI instalado
-- Conta Azure ativa
-- Java 21+ instalado
-- Gradle instalado
-
-### **1. Configurar Azure CLI:**
-
-```bash
-# Login no Azure
-az login
-
-# Verificar subscription
-az account show
-```
-
-### **2. Criar Recursos Azure:**
-
-```bash
-# Linux/Mac
-chmod +x scripts/azure-setup.sh
-./scripts/azure-setup.sh
-
-# Windows
-scripts\azure-setup.bat
-```
-
-### **3. Deploy da Aplicação:**
-
-```bash
-# Linux/Mac
-chmod +x scripts/deploy-to-azure.sh
-./scripts/deploy-to-azure.sh
-
-# Windows
-scripts\deploy-to-azure.bat
-```
-
-## 🗄️ Banco de Dados
-
-### **Azure Database for PostgreSQL:**
-
-- **Tipo**: PaaS (Platform as a Service)
-- **Tier**: Burstable (B1ms)
-- **Storage**: 32GB
-- **Backup**: Automático
-- **SSL**: Obrigatório
-
-### **Script do Banco:**
-
-O arquivo `scripts/script_bd.sql` contém:
-
-- DDL completo das tabelas
-- Índices para performance
-- Dados iniciais para teste
-- Comentários explicativos
-
-## 📚 API Endpoints
-
-### **Base URL:**
-
-- **Local**: `http://localhost:8080/api`
-- **Azure**: `https://mottu-api-fiap.azurewebsites.net/api`
-
-### **Documentação Swagger:**
-
-- **Local**: `http://localhost:8080/swagger-ui.html`
-- **Azure**: `https://mottu-api-fiap.azurewebsites.net/swagger-ui.html`
-
-## 🧪 Testes da API
-
-### **Testar CRUD Completo:**
-
-```bash
-# 1. Criar (CREATE)
-curl -X POST https://mottu-api-fiap.azurewebsites.net/api/motos \
-  -H "Content-Type: application/json" \
-  -d '{"modelo":"Yamaha Factor","placa":"CRUD123","status":"DISPONIVEL","setor":"Setor B","cor_setor":"Azul","patio":{"id":1}}'
-
-# 2. Ler (READ)
-curl https://mottu-api-fiap.azurewebsites.net/api/motos/placa/CRUD123
-
-# 3. Atualizar (UPDATE)
-curl -X PUT https://mottu-api-fiap.azurewebsites.net/api/motos/id/1 \
-  -H "Content-Type: application/json" \
-  -d '{"modelo":"Yamaha Factor 150","placa":"CRUD123","status":"MANUTENCAO","setor":"Setor C","cor_setor":"Amarelo","patio":{"id":1}}'
-
-# 4. Deletar (DELETE)
-curl -X DELETE https://mottu-api-fiap.azurewebsites.net/api/motos/id/1
-```
-
-## 🎯 Critérios de Avaliação Atendidos
-
-### **✅ Requisitos Obrigatórios:**
-
-1. **Descrição da Solução**: ✅ Sistema completo de gestão de motos
-2. **Benefícios para o Negócio**: ✅ Controle de frota e otimização
-3. **Banco de Dados em Nuvem**: ✅ Azure Database for PostgreSQL (PaaS)
-4. **CRUD Completo**: ✅ Implementado para Motos e Pátios
-5. **2+ Registros Reais**: ✅ Dados de teste inseridos
-6. **Código no GitHub**: ✅ Repositório separado
-7. **PDF com Informações**: ✅ Documentação completa
-
-### **✅ Requisitos Específicos App Service:**
-
-1. **Recursos via Azure CLI**: ✅ Todos os scripts criados
-2. **Scripts de Recursos**: ✅ azure-setup.sh/bat
-3. **Scripts de Deploy**: ✅ deploy-to-azure.sh/bat
-4. **Scripts de Build**: ✅ build-and-deploy.sh/bat
+API RESTful construída com **Spring Boot** para **gestão de motos, pátios e usuários de pátio**, simulando a operação da startup **Mottu**, conforme o desafio oficial proposto no semestre.
 
 ---
 
-**Desenvolvido para FIAP - DevOps Tools & Cloud Computing - Sprint 3**
+## 🔧 Funcionalidades
+
+- ✅ Cadastro e gerenciamento de **motos** com DTOs estruturados
+- ✅ Cadastro e gerenciamento de **pátios** com endereços
+- ✅ Cadastro e **autenticação de usuários de pátio** com Spring Security
+- ✅ Relacionamento entre entidades (Moto ↔ Pátio)
+- 🔍 Filtros avançados por status, setor e cor
+- 🔍 Contagem de motos por setor específico
+- 🔍 Status geral do pátio por tipo de ocorrência
+- 🔍 Status individual de motos por placa
+- 🛠 Atualização e remoção por **ID ou placa**
+- 🌐 Interface web completa com Thymeleaf
+- 📊 Dashboard administrativo
+- 🧭 Regras automáticas:
+  - Status define **setor** e **cor** automaticamente
+  - Ex: `DISPONIVEL` → `Setor A` / `Verde`
+
+---
+
+## 🧪 Tecnologias Utilizadas
+
+- **Java 21** - Linguagem de programação
+- **Spring Boot 3.2.5** - Framework principal
+- **Spring Data JPA** - Persistência de dados
+- **Spring Security 6** - Autenticação e autorização (Form Login)
+- **Spring Validation** - Validação de dados
+- **PostgreSQL** - Banco de dados principal
+- **Flyway** - Migração e versionamento de banco
+- **Thymeleaf** - Engine de templates para frontend
+- **Swagger OpenAPI 3** (springdoc 2.5.0) - Documentação da API
+- **ModelMapper 3.2.0** - Mapeamento entre DTOs e entidades
+- **Jackson** - Serialização JSON
+- **Docker** - Containerização da aplicação
+
+---
+
+## ▶️ Como Rodar
+
+### 🏠 **Execução Local**
+
+#### 1. Clonar o projeto
+
+```bash
+git clone https://github.com/seu-usuario/mottu-api.git
+cd mottu-api
+```
+
+#### 2. Configurar banco PostgreSQL local
+
+Certifique-se que o PostgreSQL está rodando na porta 5432 com:
+
+- **Database**: postgres
+- **Username**: postgres
+- **Password**: dudu0602
+
+#### 3. Executar localmente
+
+```bash
+# Build da aplicação
+./gradlew build
+
+# Executar
+./gradlew bootRun
+```
+
+#### 4. Acessar
+
+- **Interface Web**: http://localhost:8080/login
+- **Swagger/OpenAPI**: http://localhost:8080/swagger-ui.html
+- **API Docs JSON**: http://localhost:8080/v3/api-docs
+
+### 🐳 **Execução com Docker**
+
+```bash
+# Build da imagem
+docker build -t mottu-api .
+
+# Executar container
+docker run -p 8080:8080 mottu-api
+```
+
+### ☁️ **Deploy no Azure (App Service + PostgreSQL)**
+
+#### 1. Pré-requisitos
+
+- Azure CLI instalado e configurado
+- Conta Azure ativa
+- Java 11+ instalado
+
+#### 2. Criar recursos Azure
+
+```bash
+# Tornar scripts executáveis
+chmod +x scripts/*.sh
+
+# Criar recursos no Azure
+./scripts/deploy-azure.sh
+```
+
+#### 3. Build e Deploy
+
+```bash
+# Build da aplicação
+./scripts/build.sh
+
+# Deploy para Azure
+./scripts/deploy-jar.sh
+```
+
+#### 4. Testar aplicação
+
+```bash
+# Executar testes automatizados
+./scripts/test-api.sh
+```
+
+#### 5. Acessar aplicação na nuvem
+
+- **API**: https://mottu-api-fiap.azurewebsites.net
+- **Swagger**: https://mottu-api-fiap.azurewebsites.net/swagger-ui.html
+- **Interface Web**: https://mottu-api-fiap.azurewebsites.net/login
+
+### 👥 **Usuários de Teste**
+
+- **Admin**: admin@mottu.com.br / admin123
+- **Supervisor**: supervisor@mottu.com.br / admin123
+- **Operador**: operador@mottu.com.br / admin123
+
+### 📊 **Banco de Dados**
+
+**Local**: PostgreSQL na porta 5432
+**Nuvem**: Azure Database for PostgreSQL (configurado automaticamente)
+
+**Nota**: O projeto utiliza Flyway para migração automática do banco de dados. As tabelas e dados iniciais são criados automaticamente na primeira execução.
+
+---
+
+## 📁 Estrutura de Pastas
+
+```
+mottu-api/
+├── src/main/java/br/com/fiap/mottu_api/
+│   ├── controller/           # Controllers REST e Web
+│   │   ├── MotoController.java
+│   │   ├── MotoWebController.java
+│   │   ├── PatioController.java
+│   │   ├── PatioWebController.java
+│   │   ├── UsuarioPatioController.java
+│   │   └── WebController.java
+│   ├── dto/                  # Data Transfer Objects
+│   │   ├── MotoDTO.java
+│   │   └── MotoResponseDTO.java
+│   ├── model/                # Entidades JPA
+│   │   ├── Moto.java
+│   │   ├── Patio.java
+│   │   ├── UsuarioPatio.java
+│   │   └── StatusMoto.java
+│   ├── repository/           # Repositories JPA
+│   │   ├── MotoRepository.java
+│   │   ├── PatioRepository.java
+│   │   └── UsuarioPatioRepository.java
+│   ├── service/              # Lógica de negócio
+│   │   ├── MotoService.java
+│   │   ├── PatioService.java
+│   │   └── UsuarioPatioService.java
+│   ├── config/               # Configurações
+│   │   └── SecurityConfig.java
+│   ├── exception/            # Tratamento de exceções
+│   │   └── GlobalExceptionHandler.java
+│   └── MottuApiApplication.java
+├── src/main/resources/
+│   ├── application.properties        # Configurações locais
+│   ├── application-cloud.properties  # Configurações Azure
+│   ├── db/migration/                 # Scripts Flyway
+│   │   ├── V1__Create_tables.sql
+│   │   ├── V2__Insert_initial_patios.sql
+│   │   ├── V3__Insert_initial_users.sql
+│   │   ├── V4__Insert_sample_motos.sql
+│   │   └── ... (outras migrações)
+│   └── templates/                    # Templates Thymeleaf
+│       ├── layout.html
+│       ├── login.html
+│       ├── dashboard.html
+│       ├── motos/
+│       └── patios/
+├── scripts/                          # Scripts de deploy e teste
+│   ├── deploy-azure.sh              # Criar recursos Azure
+│   ├── build.sh                     # Build da aplicação
+│   ├── deploy-jar.sh                # Deploy para Azure
+│   ├── test-api.sh                  # Testes automatizados
+│   └── script_bd.sql                # Script do banco
+├── .deployment                       # Configuração Azure
+├── Dockerfile                        # Container Docker
+├── build.gradle                      # Dependências Gradle
+└── README.md                         # Documentação
+```
+
+---
+
+## 🧠 Lógica do Setor e Cor por Status
+
+| Status            | Setor   | Cor      |
+| ----------------- | ------- | -------- |
+| DISPONIVEL        | Setor A | Verde    |
+| RESERVADA         | Setor B | Azul     |
+| MANUTENCAO        | Setor C | Amarelo  |
+| FALTA_PECA        | Setor D | Laranja  |
+| INDISPONIVEL      | Setor E | Cinza    |
+| DANOS_ESTRUTURAIS | Setor F | Vermelho |
+| SINISTRO          | Setor G | Preto    |
+
+---
+
+## 🔄 Funcionalidades Avançadas
+
+### 🎯 Sistema de Status Inteligente
+
+- **Atualização automática**: Status da moto define automaticamente setor e cor
+- **Validação de dados**: Campos obrigatórios e formatos validados
+- **Relacionamentos**: Integridade referencial entre motos e pátios
+
+### 📊 Relatórios e Consultas
+
+- **Contagem por setor**: Quantidade de motos em cada setor
+- **Status geral**: Resumo de todas as motos por status
+- **Filtros avançados**: Busca por múltiplos critérios simultaneamente
+
+### 🔐 Segurança
+
+- **Spring Security**: Autenticação baseada em formulário
+- **Controle de acesso**: Diferentes perfis de usuário
+- **Validação de entrada**: Prevenção de ataques de injeção
+
+### 🚀 Performance
+
+- **Cache habilitado**: Melhora performance de consultas frequentes
+- **DTOs otimizados**: Transferência eficiente de dados
+- **Paginação**: Preparado para grandes volumes de dados
+
+---
+
+## 📌 Exemplos de Endpoints
+
+### 🔄 MotoController
+
+- `GET /api/motos/todos` → Lista todas as motos cadastradas (com DTOs)
+- `GET /api/motos/id/{id}` → Retorna os detalhes de uma moto pelo ID
+- `GET /api/motos/placa/{placa}` → Retorna os detalhes de uma moto pela placa
+- `GET /api/motos/status?status=DISPONIVEL` → Lista todas as motos com status específico
+- `GET /api/motos/filtro?status=&setor=&cor=` → Permite filtrar motos por status, setor e cor
+- `GET /api/motos/patio/setor/{setor}/contagem` → Retorna a quantidade de motos por setor
+- `GET /api/motos/patio/moto/{placa}/status` → Retorna o status individual da moto, setor e cor
+- `POST /api/motos` → Cadastra uma nova moto
+
+```json
+{
+  "modelo": "Honda Biz",
+  "placa": "ABC1234",
+  "status": "DISPONIVEL",
+  "nomePatio": "Pátio Butantã"
+}
+```
+
+- `PUT /api/motos/id/{id}` → Atualiza uma moto pelo ID
+- `PUT /api/motos/placa/{placa}` → Atualiza uma moto pela placa
+- `DELETE /api/motos/id/{id}` → Remove uma moto pelo ID
+- `DELETE /api/motos/placa/{placa}` → Remove uma moto pela placa
+
+### 🏢 PatioController
+
+- `GET /api/patios` → Lista todos os pátios cadastrados
+- `POST /api/patios` → Cadastra um novo pátio
+
+```json
+{
+  "nome": "Pátio Butantã",
+  "endereco": "Rua das Flores, 123 - Butantã, São Paulo - SP"
+}
+```
+
+- `GET /api/patios/status` → Retorna um resumo geral do status das motos no pátio
+
+### 👷 Usuário de Pátio
+
+- `GET /api/usuarios` → Lista todos os usuários cadastrados
+- `GET /api/usuarios/{id}` → Retorna os dados de um usuário pelo ID
+- `DELETE /api/usuarios/{id}` → Exclui um usuário pelo ID
+
+**Cadastro via Interface Web:**
+
+- `GET /cadastro` → Página de cadastro de usuário
+- `POST /cadastro` → Processa o cadastro de novo usuário
+
+**Login via Interface Web:**
+
+- `GET /login` → Página de login
+- `POST /login` → Processa o login do usuário
+
+### 🌐 Interface Web (Thymeleaf)
+
+- `GET /` → Redireciona para login
+- `GET /login` → Página de login
+- `GET /cadastro` → Página de cadastro
+- `GET /dashboard` → Dashboard principal (após login)
+- `GET /motos` → Lista de motos
+- `GET /motos/novo` → Formulário de nova moto
+- `GET /motos/{id}` → Detalhes da moto
+- `GET /patios` → Lista de pátios
+- `GET /patios/novo` → Formulário de novo pátio
+- `GET /patios/{id}` → Detalhes do pátio
+
+---
+
+## ☁️ **Deploy na Nuvem - DevOps**
+
+### **Recursos Azure Utilizados:**
+
+- **App Service**: Hospedagem da aplicação Spring Boot
+- **Azure Database for PostgreSQL**: Banco de dados gerenciado
+- **Azure CLI**: Automação da criação de recursos
+
+### **Arquitetura de Deploy:**
+
+```
+GitHub → Azure CLI → App Service ← PostgreSQL
+                    ↓
+              Aplicação Spring Boot
+```
+
+### **Scripts de Automação:**
+
+- `scripts/deploy-azure.sh` - Criação de recursos Azure
+- `scripts/build.sh` - Build da aplicação
+- `scripts/deploy-jar.sh` - Deploy para App Service
+- `scripts/test-api.sh` - Testes automatizados
+
+### **Configurações:**
+
+- **Profile Cloud**: `application-cloud.properties`
+- **Connection String**: Configurada automaticamente
+- **Variáveis de Ambiente**: DB_USERNAME, DB_PASSWORD, SPRING_PROFILES_ACTIVE
+
+---
+
+## 👥 Equipe
+
+- Eduardo Miguel Forato Monteiro – RM 555871
+- Cícero Gabriel Oliveira Serafim – RM 556996
+- Murillo Ari Ferreira Sant'Anna – RM 557183
+
+---
+
+## 📚 **Disciplinas Integradas**
+
+- **JAVA ADVANCED**: API RESTful com Spring Boot
+- **MOBILE APPLICATION DEVELOPMENT**: Integração com aplicativo mobile
+- **DEVOPS TOOLS & CLOUD COMPUTING**: Deploy no Azure App Service
