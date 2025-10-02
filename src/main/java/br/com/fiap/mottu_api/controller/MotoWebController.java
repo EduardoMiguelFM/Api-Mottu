@@ -79,7 +79,7 @@ public class MotoWebController {
             model.addAttribute("patios", patioService.listarTodos());
             model.addAttribute("statusList", StatusMoto.values());
             model.addAttribute("role", "USER"); // Valor padrão
-            return "motos/formulario";
+            return "motos/formulario-simples";
         } catch (Exception e) {
             System.out.println("DEBUG: Erro ao carregar moto: " + e.getMessage());
             e.printStackTrace();
@@ -90,8 +90,13 @@ public class MotoWebController {
 
     @PostMapping
     public String salvar(@Valid @ModelAttribute Moto moto, BindingResult result,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, Model model) {
+        System.out.println("DEBUG: Tentando salvar moto - Modelo: " + moto.getModelo() + ", Placa: " + moto.getPlaca());
+
         if (result.hasErrors()) {
+            System.out.println("DEBUG: Erros de validação: " + result.getAllErrors());
+            model.addAttribute("patios", patioService.listarTodos());
+            model.addAttribute("statusList", StatusMoto.values());
             return "motos/formulario";
         }
 
@@ -103,6 +108,8 @@ public class MotoWebController {
             redirectAttributes.addFlashAttribute("success", "Moto salva com sucesso!");
             return "redirect:/motos";
         } catch (Exception e) {
+            System.out.println("DEBUG: Erro ao salvar moto: " + e.getMessage());
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Erro ao salvar moto: " + e.getMessage());
             return "redirect:/motos/novo";
         }
@@ -110,9 +117,12 @@ public class MotoWebController {
 
     @PostMapping("/{id}")
     public String atualizar(@PathVariable Long id, @Valid @ModelAttribute Moto moto,
-            BindingResult result, RedirectAttributes redirectAttributes) {
+            BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
-            return "motos/formulario";
+            model.addAttribute("moto", moto);
+            model.addAttribute("patios", patioService.listarTodos());
+            model.addAttribute("statusList", StatusMoto.values());
+            return "motos/formulario-simples";
         }
 
         try {
@@ -207,5 +217,16 @@ public class MotoWebController {
                 modeloInfo + "com danos estruturais identificados. Necessária avaliação técnica detalhada";
             case SINISTRO -> modeloInfo + "envolvida em sinistro. Aguardando perícia e definição de responsabilidades";
         };
+    }
+
+    @PostMapping("/{id}/delete")
+    public String excluir(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            motoService.excluir(id);
+            redirectAttributes.addFlashAttribute("success", "Moto excluída com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao excluir moto: " + e.getMessage());
+        }
+        return "redirect:/motos";
     }
 }

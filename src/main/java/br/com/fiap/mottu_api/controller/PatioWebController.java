@@ -42,16 +42,25 @@ public class PatioWebController {
 
     @GetMapping("/editar/{id}")
     public String editarFormulario(@PathVariable Long id, Model model) {
-        Patio patio = patioService.buscarPorId(id);
-        model.addAttribute("patio", patio);
-        model.addAttribute("role", "USER"); // Valor padrão
-        return "patios/formulario";
+        try {
+            Patio patio = patioService.buscarPorId(id);
+            model.addAttribute("patio", patio);
+            model.addAttribute("role", "USER"); // Valor padrão
+            return "patios/formulario";
+        } catch (Exception e) {
+            model.addAttribute("error", "Erro ao carregar formulário de edição: " + e.getMessage());
+            return "redirect:/patios";
+        }
     }
 
     @PostMapping
     public String salvar(@Valid @ModelAttribute Patio patio, BindingResult result,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, Model model) {
+        System.out.println(
+                "DEBUG: Tentando salvar pátio - Nome: " + patio.getNome() + ", Endereço: " + patio.getEndereco());
+
         if (result.hasErrors()) {
+            System.out.println("DEBUG: Erros de validação: " + result.getAllErrors());
             return "patios/formulario";
         }
 
@@ -60,6 +69,8 @@ public class PatioWebController {
             redirectAttributes.addFlashAttribute("success", "Pátio salvo com sucesso!");
             return "redirect:/patios";
         } catch (Exception e) {
+            System.out.println("DEBUG: Erro ao salvar pátio: " + e.getMessage());
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Erro ao salvar pátio: " + e.getMessage());
             return "redirect:/patios/novo";
         }
@@ -121,5 +132,16 @@ public class PatioWebController {
             model.addAttribute("error", "Erro ao carregar detalhes do pátio: " + e.getMessage());
             return "redirect:/patios";
         }
+    }
+
+    @PostMapping("/{id}/delete")
+    public String excluir(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            patioService.excluir(id);
+            redirectAttributes.addFlashAttribute("success", "Pátio excluído com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao excluir pátio: " + e.getMessage());
+        }
+        return "redirect:/patios";
     }
 }

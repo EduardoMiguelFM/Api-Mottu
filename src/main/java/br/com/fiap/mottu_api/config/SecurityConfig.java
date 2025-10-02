@@ -8,9 +8,9 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -18,10 +18,13 @@ public class SecurityConfig {
 
     private final UsuarioPatioService usuarioPatioService;
     private final PasswordEncoder passwordEncoder;
+    private final CorsConfigurationSource corsConfigurationSource;
 
-    public SecurityConfig(UsuarioPatioService usuarioPatioService, PasswordEncoder passwordEncoder) {
+    public SecurityConfig(UsuarioPatioService usuarioPatioService, PasswordEncoder passwordEncoder,
+            CorsConfigurationSource corsConfigurationSource) {
         this.usuarioPatioService = usuarioPatioService;
         this.passwordEncoder = passwordEncoder;
+        this.corsConfigurationSource = corsConfigurationSource;
     }
 
     @Bean
@@ -46,6 +49,9 @@ public class SecurityConfig {
 
                         // API pública para Swagger
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+                        // API pública para autenticação mobile
+                        .requestMatchers("/api/auth/**").permitAll()
 
                         // Rotas administrativas
                         .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
@@ -72,6 +78,11 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll())
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**")
+                        .csrfTokenRepository(
+                                org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authenticationProvider(authenticationProvider());
 
         return http.build();

@@ -37,6 +37,7 @@ public class Moto {
 
     @ManyToOne
     @JoinColumn(name = "patio_id")
+    @NotNull(message = "Pátio é obrigatório")
     private Patio patio;
 
     @Column(name = "created_at")

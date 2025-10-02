@@ -34,6 +34,7 @@ public class PatioService {
     public Patio atualizar(Long id, Patio patio) {
         Patio patioExistente = buscarPorId(id);
         patioExistente.setNome(patio.getNome());
+        patioExistente.setEndereco(patio.getEndereco());
         return patioRepository.save(patioExistente);
     }
 
@@ -54,5 +55,12 @@ public class PatioService {
                         status -> motoRepository.findAll().stream()
                                 .filter(m -> m.getStatus() == status)
                                 .count()));
+    }
+
+    public void excluir(Long id) {
+        if (!patioRepository.existsById(id)) {
+            throw new EntityNotFoundException("Pátio com ID " + id + " não encontrado");
+        }
+        patioRepository.deleteById(id);
     }
 }

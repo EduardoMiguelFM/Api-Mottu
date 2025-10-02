@@ -1,7 +1,8 @@
 -- =============================================
 -- Mottu API Database Script
 -- Sistema de Gestão de Motos, Pátios e Usuários
--- Challenge FIAP 2025
+-- Challenge FIAP 2025 - DevOps Tools & Cloud Computing
+-- Azure Database for PostgreSQL
 -- =============================================
 
 -- Tabela de Pátios

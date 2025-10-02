@@ -18,7 +18,7 @@
               role="alert"
             >
               <i class="fas fa-check-circle me-2"></i>
-              <span th:text="${success}"></span>
+              <span th:text="${success}">Mensagem de sucesso</span>
               <button
                 type="button"
                 class="btn-close"
@@ -176,7 +176,7 @@
                           <span
                             th:if="${moto.status.name() == 'FALTA_PECA'}"
                             class="badge"
-                            style="background-color: #fd7e14; color: white;"
+                            style="background-color: #fd7e14; color: white"
                             th:text="${moto.status.descricao}"
                             >Falta Peça</span
                           >
@@ -319,11 +319,12 @@
             >
               Cancelar
             </button>
-            <form
-              th:action="@{/motos/deletar/{id}}"
-              method="post"
-              id="deleteForm"
-            >
+            <form method="post" id="deleteForm">
+              <input
+                type="hidden"
+                th:name="${_csrf.parameterName}"
+                th:value="${_csrf.token}"
+              />
               <button type="submit" class="btn btn-danger">Excluir</button>
             </form>
           </div>
@@ -335,8 +336,17 @@
 
     <script>
       function confirmarExclusao(id) {
-        document.getElementById("deleteForm").action = "/motos/deletar/" + id;
-        new bootstrap.Modal(document.getElementById("confirmModal")).show();
+        document.getElementById("deleteForm").action =
+          "/motos/" + id + "/delete";
+
+        // Aguardar o Bootstrap carregar
+        if (typeof bootstrap !== "undefined") {
+          new bootstrap.Modal(document.getElementById("confirmModal")).show();
+        } else {
+          // Fallback se Bootstrap não estiver carregado
+          document.getElementById("confirmModal").style.display = "block";
+          document.getElementById("confirmModal").classList.add("show");
+        }
       }
     </script>
   </body>

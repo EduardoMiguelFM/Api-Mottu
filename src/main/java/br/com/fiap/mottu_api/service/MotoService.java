@@ -175,4 +175,11 @@ public class MotoService {
         dto.setNomePatio(moto.getPatio().getNome());
         return dto;
     }
+
+    public void excluir(Long id) {
+        if (!motoRepository.existsById(id)) {
+            throw new EntityNotFoundException("Moto com ID " + id + " não encontrada");
+        }
+        motoRepository.deleteById(id);
+    }
 }
