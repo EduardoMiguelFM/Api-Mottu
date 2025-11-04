@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="fragments/header :: head">
+  <head th:replace="~{fragments/header :: head}">
     <title>Cadastro - MotoVision</title>
     <style>
       body {
@@ -173,7 +173,6 @@
       </div>
     </div>
 
-    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
   </body>
 </html>
-

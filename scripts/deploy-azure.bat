@@ -1,15 +1,15 @@
 @echo off
 REM Script de Deploy para Azure App Service com PostgreSQL
-REM Mottu API - Challenge FIAP 2025
+REM MotoVision API - Challenge FIAP 2025
 
-set RESOURCE_GROUP=MottuRG
+set RESOURCE_GROUP=MotoVisionRG
 set LOCATION="East US"
-set POSTGRES_SERVER=mottu-postgres-server
-set POSTGRES_DB=mottudb
-set POSTGRES_USER=mottuadmin
-set POSTGRES_PASSWORD=MottuPass123!
-set APP_NAME=mottu-api-fiap
-set APP_PLAN=MottuAppServicePlan
+set POSTGRES_SERVER=motovision-postgres-server
+set POSTGRES_DB=motovisiondb
+set POSTGRES_USER=motovisionadmin
+set POSTGRES_PASSWORD=MotoVisionPass123!
+set APP_NAME=motovision-api
+set APP_PLAN=MotoVisionAppServicePlan
 
 echo === CRIANDO RECURSOS AZURE ===
 
@@ -35,7 +35,7 @@ az appservice plan create --name %APP_PLAN% --resource-group %RESOURCE_GROUP% --
 
 REM 6. Criar Web App
 echo 6. Criando Web App...
-az webapp create --resource-group %RESOURCE_GROUP% --plan %APP_PLAN% --name %APP_NAME% --runtime "JAVA|11-java11"
+az webapp create --resource-group %RESOURCE_GROUP% --plan %APP_PLAN% --name %APP_NAME% --runtime "JAVA|21-java21"
 
 REM 7. Configurar Connection String
 echo 7. Configurando connection string...

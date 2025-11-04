@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Script de Deploy para Azure App Service com PostgreSQL
-# Mottu API - Challenge FIAP 2025
+# MotoVision API - Challenge FIAP 2025
 
 # Variáveis
-RESOURCE_GROUP="MottuRG"
+RESOURCE_GROUP="MotoVisionRG"
 LOCATION="East US"
-POSTGRES_SERVER="mottu-postgres-server"
-POSTGRES_DB="mottudb"
-POSTGRES_USER="mottuadmin"
-POSTGRES_PASSWORD="MottuPass123!"
-APP_NAME="mottu-api-fiap"
-APP_PLAN="MottuAppServicePlan"
+POSTGRES_SERVER="motovision-postgres-server"
+POSTGRES_DB="motovisiondb"
+POSTGRES_USER="motovisionadmin"
+POSTGRES_PASSWORD="MotoVisionPass123!"
+APP_NAME="motovision-api"
+APP_PLAN="MotoVisionAppServicePlan"
 
 echo "=== CRIANDO RECURSOS AZURE ==="
 
@@ -62,7 +62,7 @@ az webapp create \
   --resource-group $RESOURCE_GROUP \
   --plan $APP_PLAN \
   --name $APP_NAME \
-  --runtime "JAVA|11-java11"
+  --runtime "JAVA|21-java21"
 
 # 7. Configurar Connection String
 echo "7. Configurando connection string..."

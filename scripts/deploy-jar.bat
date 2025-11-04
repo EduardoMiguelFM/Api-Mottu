@@ -1,9 +1,9 @@
 @echo off
 REM Script para Deploy do JAR no Azure App Service
-REM Mottu API - Challenge FIAP 2025
+REM MotoVision API - Challenge FIAP 2025
 
-set APP_NAME=mottu-api-fiap
-set RESOURCE_GROUP=MottuRG
+set APP_NAME=motovision-api
+set RESOURCE_GROUP=MotoVisionRG
 set JAR_FILE=build\libs\mottu-api-0.0.1-SNAPSHOT.jar
 
 echo === DEPLOY DO JAR PARA AZURE APP SERVICE ===

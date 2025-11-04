@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="fragments/header :: head">
+  <head th:replace="~{fragments/header :: head}">
     <title>Detalhes da Moto - MotoVision</title>
   </head>
   <body>
-    <div th:replace="fragments/header :: navbar"></div>
+    <div th:replace="~{fragments/header :: navbar}"></div>
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-2 p-0" th:replace="fragments/menu :: sidebar"></div>
+        <div
+          class="col-md-2 p-0"
+          th:replace="~{fragments/menu :: sidebar}"
+        ></div>
         <div class="col-md-10">
           <main class="p-4">
             <!-- Header -->
@@ -84,12 +87,12 @@
                           th:text="${moto.status.descricao}"
                           >Manutenção</span
                         >
-                         <span
-                           th:if="${moto.status.name() == 'FALTA_PECA'}"
-                           class="badge fs-6"
-                           style="background-color: #fd7e14; color: white;"
-                           th:text="${moto.status.descricao}"
-                           >Falta Peça</span
+                        <span
+                          th:if="${moto.status.name() == 'FALTA_PECA'}"
+                          class="badge fs-6"
+                          style="background-color: #fd7e14; color: white"
+                          th:text="${moto.status.descricao}"
+                          >Falta Peça</span
                         >
                         <span
                           th:if="${moto.status.name() == 'INDISPONIVEL'}"
@@ -319,6 +322,6 @@
       </div>
     </div>
 
-    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
   </body>
 </html>

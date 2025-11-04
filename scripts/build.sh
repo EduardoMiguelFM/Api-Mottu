@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Script de Build da Aplicação
-# Mottu API - Challenge FIAP 2025
+# MotoVision API - Challenge FIAP 2025
 
-echo "=== BUILD DA APLICAÇÃO MOTTU API ==="
+echo "=== BUILD DA APLICAÇÃO MOTOVISION API ==="
 echo ""
 
 # Verificar se o Gradle está disponível

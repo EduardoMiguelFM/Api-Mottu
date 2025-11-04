@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Script para Deploy do JAR no Azure App Service
-# Mottu API - Challenge FIAP 2025
+# MotoVision API - Challenge FIAP 2025
 
-APP_NAME="mottu-api-fiap"
-RESOURCE_GROUP="MottuRG"
+APP_NAME="motovision-api"
+RESOURCE_GROUP="MotoVisionRG"
 JAR_FILE="build/libs/mottu-api-0.0.1-SNAPSHOT.jar"
 
 echo "=== DEPLOY DO JAR PARA AZURE APP SERVICE ==="

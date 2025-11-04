@@ -89,44 +89,61 @@ docker run -p 8080:8080 mottu-api
 
 ### ☁️ **Deploy no Azure (App Service + PostgreSQL)**
 
-#### 1. Pré-requisitos
-
-- Azure CLI instalado e configurado
-- Conta Azure ativa
-- Java 11+ instalado
-
-#### 2. Criar recursos Azure
+#### 🚀 Deploy Rápido com Azure Cloud Shell (Recomendado)
 
 ```bash
-# Tornar scripts executáveis
-chmod +x scripts/*.sh
+# 1. Acessar Azure Cloud Shell (portal.azure.com)
+# 2. Fazer upload do projeto ou clonar do repositório
+git clone <seu-repositorio>
+cd Api-Mottu
 
-# Criar recursos no Azure
-./scripts/deploy-azure.sh
+# 3. Tornar script executável
+chmod +x scripts/deploy-azure-cloud-shell.sh
+
+# 4. Executar deploy completo automatizado
+./scripts/deploy-azure-cloud-shell.sh
 ```
 
-#### 3. Build e Deploy
+O script automatiza todo o processo:
+
+- ✅ Criação de recursos Azure (PostgreSQL + App Service)
+- ✅ Configuração de conexão e variáveis de ambiente
+- ✅ Build da aplicação
+- ✅ Deploy do JAR
+
+#### 📋 Deploy Manual por Etapas
 
 ```bash
-# Build da aplicação
+# 1. Criar recursos Azure
+./scripts/deploy-azure.sh
+
+# 2. Build da aplicação
 ./scripts/build.sh
 
-# Deploy para Azure
+# 3. Deploy do JAR
 ./scripts/deploy-jar.sh
 ```
 
-#### 4. Testar aplicação
+#### 📚 Documentação Completa
 
-```bash
-# Executar testes automatizados
-./scripts/test-api.sh
-```
+Para instruções detalhadas, troubleshooting e configurações avançadas, consulte:
 
-#### 5. Acessar aplicação na nuvem
+- **[DEPLOY_AZURE.md](DEPLOY_AZURE.md)** - Guia completo de deploy
 
-- **API**: https://mottu-api-fiap.azurewebsites.net
-- **Swagger**: https://mottu-api-fiap.azurewebsites.net/swagger-ui.html
-- **Interface Web**: https://mottu-api-fiap.azurewebsites.net/login
+#### 🌐 Acessar aplicação na nuvem
+
+Após o deploy (aguarde 2-3 minutos para inicialização):
+
+- **API**: https://motovision-api.azurewebsites.net
+- **Swagger**: https://motovision-api.azurewebsites.net/swagger-ui.html
+- **Interface Web**: https://motovision-api.azurewebsites.net/login
+
+#### ⚙️ Configurações Importantes
+
+- **Java 21**: Aplicação requer Java 21 (configurado automaticamente)
+- **PostgreSQL**: Usa Azure Database for PostgreSQL (não H2)
+- **Profile Cloud**: Ativado automaticamente (`SPRING_PROFILES_ACTIVE=cloud`)
+- **Flyway**: Migrações executadas automaticamente na primeira inicialização
 
 ### 👥 **Usuários de Teste**
 

@@ -1,8 +1,8 @@
 @echo off
 REM Script de Build da Aplicação
-REM Mottu API - Challenge FIAP 2025
+REM MotoVision API - Challenge FIAP 2025
 
-echo === BUILD DA APLICAÇÃO MOTTU API ===
+echo === BUILD DA APLICAÇÃO MOTOVISION API ===
 echo.
 
 REM Verificar se o Gradle está disponível

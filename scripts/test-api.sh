@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Script de Teste da API no Azure
-# Mottu API - Challenge FIAP 2025
+# MotoVision API - Challenge FIAP 2025
 
-APP_URL="https://mottu-api-fiap.azurewebsites.net/api"
+APP_URL="https://motovision-api.azurewebsites.net/api"
 
 echo "=== TESTANDO API NO AZURE ==="
 echo "URL Base: $APP_URL"
@@ -115,6 +115,6 @@ echo ""
 echo "=== TESTES CONCLUÍDOS ==="
 echo ""
 echo "URLs importantes:"
-echo "- API: https://mottu-api-fiap.azurewebsites.net"
-echo "- Swagger: https://mottu-api-fiap.azurewebsites.net/swagger-ui.html"
-echo "- Interface Web: https://mottu-api-fiap.azurewebsites.net/login"
+echo "- API: https://motovision-api.azurewebsites.net"
+echo "- Swagger: https://motovision-api.azurewebsites.net/swagger-ui.html"
+echo "- Interface Web: https://motovision-api.azurewebsites.net/login"

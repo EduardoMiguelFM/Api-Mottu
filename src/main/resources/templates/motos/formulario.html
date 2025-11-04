@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="fragments/header :: head">
+  <head th:replace="~{fragments/header :: head}">
     <title
       th:text="${moto.id != null ? 'Editar Moto' : 'Nova Moto'} + ' - MotoVision'"
     >
@@ -8,11 +8,14 @@
     </title>
   </head>
   <body>
-    <div th:replace="fragments/header :: navbar"></div>
+    <div th:replace="~{fragments/header :: navbar}"></div>
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-2 p-0" th:replace="fragments/menu :: sidebar"></div>
+        <div
+          class="col-md-2 p-0"
+          th:replace="~{fragments/menu :: sidebar}"
+        ></div>
         <div class="col-md-10">
           <main class="p-4">
             <!-- Mensagens -->
@@ -253,7 +256,7 @@
       </div>
     </div>
 
-    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
     <script>
       // Atualizar setor e cor automaticamente quando o status mudar
