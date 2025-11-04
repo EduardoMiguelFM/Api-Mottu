@@ -75,7 +75,7 @@ Se precisar configurar manualmente:
 ### 1. Criar Resource Group
 
 ```bash
-az group create --name MotoVisionRG --location eastus
+az group create --name MotoVisionRG --location brazilsouth
 ```
 
 ### 2. Criar PostgreSQL Flexible Server
@@ -84,7 +84,7 @@ az group create --name MotoVisionRG --location eastus
 az postgres flexible-server create \
   --resource-group MotoVisionRG \
   --name motovision-postgres-server \
-  --location eastus \
+  --location brazilsouth \
   --admin-user motovisionadmin \
   --admin-password "MotoVisionPass123!Secure@2025" \
   --sku-name Standard_B1ms \
@@ -120,7 +120,7 @@ az postgres flexible-server firewall-rule create \
 az appservice plan create \
   --name MotoVisionAppServicePlan \
   --resource-group MotoVisionRG \
-  --location eastus \
+  --location brazilsouth \
   --sku B1 \
   --is-linux
 ```

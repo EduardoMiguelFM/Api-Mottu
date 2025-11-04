@@ -3,7 +3,7 @@ REM Script de Deploy para Azure App Service com PostgreSQL
 REM MotoVision API - Challenge FIAP 2025
 
 set RESOURCE_GROUP=MotoVisionRG
-set LOCATION="East US"
+set LOCATION="Brazil South"
 set POSTGRES_SERVER=motovision-postgres-server
 set POSTGRES_DB=motovisiondb
 set POSTGRES_USER=motovisionadmin

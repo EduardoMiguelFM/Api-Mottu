@@ -5,7 +5,7 @@
 
 # Variáveis
 RESOURCE_GROUP="MotoVisionRG"
-LOCATION="East US"
+LOCATION="Brazil South"
 POSTGRES_SERVER="motovision-postgres-server"
 POSTGRES_DB="motovisiondb"
 POSTGRES_USER="motovisionadmin"

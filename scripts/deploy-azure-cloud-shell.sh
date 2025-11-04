@@ -23,7 +23,7 @@ NC='\033[0m' # No Color
 
 # Variáveis de configuração
 RESOURCE_GROUP="MotoVisionRG"
-LOCATION="eastus"  # Mudado para formato correto (sem espaço)
+LOCATION="brazilsouth"  # Região do Brasil Sul (suporta PostgreSQL Flexible Server)
 POSTGRES_SERVER="motovision-postgres-$(date +%s | tail -c 5)"  # Nome único com timestamp
 POSTGRES_DB="motovisiondb"
 POSTGRES_USER="motovisionadmin"
