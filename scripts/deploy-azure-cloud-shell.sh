@@ -82,49 +82,68 @@ echo ""
 # ==========================================
 # 2. CRIAR POSTGRESQL FLEXIBLE SERVER
 # ==========================================
-echo -e "${YELLOW}[2/9] Criando servidor PostgreSQL Flexible Server...${NC}"
-az postgres flexible-server create \
-  --resource-group $RESOURCE_GROUP \
-  --name $POSTGRES_SERVER \
-  --location "$LOCATION" \
-  --admin-user $POSTGRES_USER \
-  --admin-password $POSTGRES_PASSWORD \
-  --sku-name Standard_B1ms \
-  --tier Burstable \
-  --storage-size 32 \
-  --version 14 \
-  --public-access 0.0.0.0 \
-  --output none
+echo -e "${YELLOW}[2/9] Verificando servidor PostgreSQL Flexible Server...${NC}"
 
-echo -e "${GREEN}✅ Servidor PostgreSQL criado: $POSTGRES_SERVER.postgres.database.azure.com${NC}"
+# Tentar encontrar servidor PostgreSQL existente
+EXISTING_POSTGRES=$(az postgres flexible-server list --resource-group $RESOURCE_GROUP --query "[0].name" -o tsv 2>/dev/null)
+
+if [ -n "$EXISTING_POSTGRES" ] && [ "$EXISTING_POSTGRES" != "null" ]; then
+    POSTGRES_SERVER="$EXISTING_POSTGRES"
+    echo -e "${GREEN}✅ Servidor PostgreSQL já existe: $POSTGRES_SERVER${NC}"
+elif az postgres flexible-server show --resource-group $RESOURCE_GROUP --name $POSTGRES_SERVER &> /dev/null; then
+    echo -e "${GREEN}✅ Servidor PostgreSQL já existe: $POSTGRES_SERVER${NC}"
+else
+    echo "  Criando servidor PostgreSQL..."
+    az postgres flexible-server create \
+      --resource-group $RESOURCE_GROUP \
+      --name $POSTGRES_SERVER \
+      --location "$LOCATION" \
+      --admin-user $POSTGRES_USER \
+      --admin-password $POSTGRES_PASSWORD \
+      --sku-name Standard_B1ms \
+      --tier Burstable \
+      --storage-size 32 \
+      --version 14 \
+      --public-access 0.0.0.0 \
+      --output none
+    echo -e "${GREEN}✅ Servidor PostgreSQL criado: $POSTGRES_SERVER.postgres.database.azure.com${NC}"
+fi
 echo ""
 
 # ==========================================
 # 3. CRIAR DATABASE
 # ==========================================
-echo -e "${YELLOW}[3/9] Criando database...${NC}"
-az postgres flexible-server db create \
-  --resource-group $RESOURCE_GROUP \
-  --server-name $POSTGRES_SERVER \
-  --database-name $POSTGRES_DB \
-  --output none
-
-echo -e "${GREEN}✅ Database '$POSTGRES_DB' criado.${NC}"
+echo -e "${YELLOW}[3/9] Verificando database...${NC}"
+if az postgres flexible-server db show --resource-group $RESOURCE_GROUP --server-name $POSTGRES_SERVER --database-name $POSTGRES_DB &> /dev/null; then
+    echo -e "${GREEN}✅ Database '$POSTGRES_DB' já existe.${NC}"
+else
+    echo "  Criando database..."
+    az postgres flexible-server db create \
+      --resource-group $RESOURCE_GROUP \
+      --server-name $POSTGRES_SERVER \
+      --database-name $POSTGRES_DB \
+      --output none
+    echo -e "${GREEN}✅ Database '$POSTGRES_DB' criado.${NC}"
+fi
 echo ""
 
 # ==========================================
 # 4. CONFIGURAR FIREWALL (Permitir Azure Services)
 # ==========================================
-echo -e "${YELLOW}[4/9] Configurando firewall para permitir Azure Services...${NC}"
-az postgres flexible-server firewall-rule create \
-  --resource-group $RESOURCE_GROUP \
-  --name $POSTGRES_SERVER \
-  --rule-name AllowAzureServices \
-  --start-ip-address 0.0.0.0 \
-  --end-ip-address 0.0.0.0 \
-  --output none
-
-echo -e "${GREEN}✅ Firewall configurado.${NC}"
+echo -e "${YELLOW}[4/9] Verificando regra de firewall...${NC}"
+if az postgres flexible-server firewall-rule show --resource-group $RESOURCE_GROUP --name $POSTGRES_SERVER --rule-name AllowAzureServices &> /dev/null; then
+    echo -e "${GREEN}✅ Regra de firewall já existe.${NC}"
+else
+    echo "  Criando regra de firewall..."
+    az postgres flexible-server firewall-rule create \
+      --resource-group $RESOURCE_GROUP \
+      --name $POSTGRES_SERVER \
+      --rule-name AllowAzureServices \
+      --start-ip-address 0.0.0.0 \
+      --end-ip-address 0.0.0.0 \
+      --output none
+    echo -e "${GREEN}✅ Firewall configurado.${NC}"
+fi
 echo ""
 
 # ==========================================
@@ -148,10 +167,18 @@ echo ""
 # ==========================================
 # 6. CRIAR WEB APP
 # ==========================================
-echo -e "${YELLOW}[6/9] Criando Web App (Java 21)...${NC}"
-if az webapp show --name $APP_NAME --resource-group $RESOURCE_GROUP &> /dev/null; then
-    echo -e "${GREEN}✅ Web App já existe.${NC}"
+echo -e "${YELLOW}[6/9] Verificando Web App (Java 21)...${NC}"
+
+# Tentar encontrar Web App existente
+EXISTING_WEBAPP=$(az webapp list --resource-group $RESOURCE_GROUP --query "[0].name" -o tsv 2>/dev/null)
+
+if [ -n "$EXISTING_WEBAPP" ] && [ "$EXISTING_WEBAPP" != "null" ]; then
+    APP_NAME="$EXISTING_WEBAPP"
+    echo -e "${GREEN}✅ Web App já existe: $APP_NAME${NC}"
+elif az webapp show --name $APP_NAME --resource-group $RESOURCE_GROUP &> /dev/null; then
+    echo -e "${GREEN}✅ Web App já existe: $APP_NAME${NC}"
 else
+    echo "  Criando Web App..."
     az webapp create \
       --resource-group $RESOURCE_GROUP \
       --plan $APP_PLAN \
@@ -218,10 +245,55 @@ if [ ! -f "build.gradle" ]; then
     exit 1
 fi
 
+# Verificar e instalar Java 21 se necessário
+echo "  Verificando Java 21..."
+JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1 2>/dev/null || echo "0")
+
+if ! command -v java &> /dev/null || [ "$JAVA_VERSION" != "21" ]; then
+    echo -e "${YELLOW}⚠️  Java 21 não encontrado. Instalando Java 21...${NC}"
+    sudo apt-get update -qq > /dev/null 2>&1
+    sudo apt-get install -y openjdk-21-jdk > /dev/null 2>&1
+    
+    # Configurar JAVA_HOME
+    if [ -d "/usr/lib/jvm/java-21-openjdk-amd64" ]; then
+        export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+    elif [ -d "/usr/lib/jvm/java-21-openjdk" ]; then
+        export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
+    else
+        # Tentar encontrar Java 21
+        JAVA_HOME=$(find /usr/lib/jvm -name "java-21-openjdk*" -type d | head -n 1)
+        if [ -n "$JAVA_HOME" ]; then
+            export JAVA_HOME
+        fi
+    fi
+    
+    export PATH=$JAVA_HOME/bin:$PATH
+    
+    echo -e "${GREEN}✅ Java 21 instalado${NC}"
+fi
+
+echo "  Java version:"
+java -version 2>&1 | head -n 1
+
 # Build da aplicação
 echo "  Compilando aplicação..."
 chmod +x gradlew 2>/dev/null || true
-./gradlew clean build -x test --no-daemon
+
+# Garantir que está usando Java 21
+export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-21-openjdk-amd64}
+export PATH=$JAVA_HOME/bin:$PATH
+
+# Executar build com timeout (pode demorar na primeira vez)
+echo "  Isso pode demorar alguns minutos na primeira vez..."
+timeout 600 ./gradlew clean build -x test --no-daemon || {
+    echo -e "${RED}❌ Build falhou ou demorou muito${NC}"
+    echo ""
+    echo -e "${YELLOW}💡 Alternativa: Faça build localmente e faça upload do JAR${NC}"
+    echo "  1. Na sua máquina: ./gradlew clean build -x test"
+    echo "  2. Faça upload do JAR: build/libs/mottu-api-0.0.1-SNAPSHOT.jar"
+    echo "  3. Execute: ./scripts/deploy-jar-only.sh"
+    exit 1
+}
 
 # Verificar se o JAR foi gerado
 JAR_FILE="build/libs/mottu-api-0.0.1-SNAPSHOT.jar"
