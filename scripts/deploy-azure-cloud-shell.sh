@@ -247,29 +247,144 @@ fi
 
 # Verificar e instalar Java 21 se necessário
 echo "  Verificando Java 21..."
-JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1 2>/dev/null || echo "0")
 
-if ! command -v java &> /dev/null || [ "$JAVA_VERSION" != "21" ]; then
-    echo -e "${YELLOW}⚠️  Java 21 não encontrado. Instalando Java 21...${NC}"
-    sudo apt-get update -qq > /dev/null 2>&1
-    sudo apt-get install -y openjdk-21-jdk > /dev/null 2>&1
-    
-    # Configurar JAVA_HOME
-    if [ -d "/usr/lib/jvm/java-21-openjdk-amd64" ]; then
-        export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-    elif [ -d "/usr/lib/jvm/java-21-openjdk" ]; then
-        export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
+# Função para verificar versão Java
+check_java_version() {
+    local java_path=$1
+    if [ -f "$java_path" ]; then
+        local version=$($java_path -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
+        echo "$version"
     else
-        # Tentar encontrar Java 21
-        JAVA_HOME=$(find /usr/lib/jvm -name "java-21-openjdk*" -type d | head -n 1)
-        if [ -n "$JAVA_HOME" ]; then
-            export JAVA_HOME
+        echo "0"
+    fi
+}
+
+# Verificar se Java 21 já está disponível no PATH
+JAVA_VERSION=$(check_java_version "java")
+
+if [ "$JAVA_VERSION" != "21" ]; then
+    echo -e "${YELLOW}⚠️  Java 21 não encontrado no PATH. Tentando instalar...${NC}"
+    
+    # Verificar se Java 21 está instalado em algum lugar
+    POSSIBLE_JAVA_HOMES=(
+        "/usr/lib/jvm/java-21-openjdk-amd64"
+        "/usr/lib/jvm/java-21-openjdk"
+        "$HOME/.sdkman/candidates/java/21.0.2-tem"
+        "$HOME/.sdkman/candidates/java/21.0.2-open"
+        "$HOME/.sdkman/candidates/java/current"
+    )
+    
+    JAVA_FOUND=false
+    for JAVA_HOME_PATH in "${POSSIBLE_JAVA_HOMES[@]}"; do
+        if [ -d "$JAVA_HOME_PATH" ] && [ -f "$JAVA_HOME_PATH/bin/java" ]; then
+            JAVA_VER_CHECK=$(check_java_version "$JAVA_HOME_PATH/bin/java")
+            if [ "$JAVA_VER_CHECK" = "21" ]; then
+                export JAVA_HOME="$JAVA_HOME_PATH"
+                export PATH=$JAVA_HOME/bin:$PATH
+                JAVA_FOUND=true
+                echo -e "${GREEN}✅ Java 21 encontrado em: $JAVA_HOME${NC}"
+                break
+            fi
+        fi
+    done
+    
+    # Se não encontrou, tentar instalar via SDKMAN (sem sudo)
+    if [ "$JAVA_FOUND" = false ]; then
+        echo -e "${YELLOW}📦 Instalando Java 21 via SDKMAN...${NC}"
+        
+        # Instalar SDKMAN se não existir
+        if [ ! -d "$HOME/.sdkman" ]; then
+            echo "  Instalando SDKMAN..."
+            curl -s "https://get.sdkman.io" | bash > /dev/null 2>&1
+        fi
+        
+        # Carregar SDKMAN
+        if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
+            source "$HOME/.sdkman/bin/sdkman-init.sh"
+            
+            # Instalar Java 21 (tentando versões disponíveis)
+            echo "  Baixando Java 21 (isso pode demorar alguns minutos)..."
+            if sdk install java 21.0.2-tem 2>/dev/null || \
+               sdk install java 21.0.2-open 2>/dev/null || \
+               sdk install java 21.0.1-tem 2>/dev/null || \
+               sdk install java 21.0.1-open 2>/dev/null; then
+                
+                # Configurar como padrão
+                sdk default java 21.0.2-tem 2>/dev/null || \
+                sdk default java 21.0.2-open 2>/dev/null || \
+                sdk default java 21.0.1-tem 2>/dev/null || \
+                sdk default java 21.0.1-open 2>/dev/null || true
+                
+                # Recarregar SDKMAN
+                source "$HOME/.sdkman/bin/sdkman-init.sh"
+                
+                # Verificar se funcionou
+                JAVA_HOME_SDKMAN="$HOME/.sdkman/candidates/java/current"
+                if [ -f "$JAVA_HOME_SDKMAN/bin/java" ]; then
+                    JAVA_VER_CHECK=$(check_java_version "$JAVA_HOME_SDKMAN/bin/java")
+                    if [ "$JAVA_VER_CHECK" = "21" ]; then
+                        export JAVA_HOME="$JAVA_HOME_SDKMAN"
+                        export PATH=$JAVA_HOME/bin:$PATH
+                        JAVA_FOUND=true
+                        echo -e "${GREEN}✅ Java 21 instalado via SDKMAN${NC}"
+                    fi
+                fi
+            fi
+        fi
+        
+        # Se ainda não encontrou, tentar download direto do OpenJDK
+        if [ "$JAVA_FOUND" = false ]; then
+            echo -e "${YELLOW}📦 Tentando download direto do OpenJDK 21...${NC}"
+            JAVA_DIR="$HOME/java-21"
+            mkdir -p "$JAVA_DIR"
+            
+            # Tentar baixar OpenJDK 21 (Linux x64)
+            if command -v wget &> /dev/null; then
+                echo "  Baixando OpenJDK 21..."
+                wget -q -O /tmp/openjdk-21.tar.gz "https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91dc5584760ac0/11/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz" 2>/dev/null || \
+                wget -q -O /tmp/openjdk-21.tar.gz "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jdk_x64_linux_hotspot_21.0.2_13.tar.gz" 2>/dev/null
+                
+                if [ -f /tmp/openjdk-21.tar.gz ]; then
+                    echo "  Extraindo OpenJDK 21..."
+                    tar -xzf /tmp/openjdk-21.tar.gz -C "$JAVA_DIR" --strip-components=1 2>/dev/null
+                    rm /tmp/openjdk-21.tar.gz 2>/dev/null
+                    
+                    if [ -f "$JAVA_DIR/bin/java" ]; then
+                        JAVA_VER_CHECK=$(check_java_version "$JAVA_DIR/bin/java")
+                        if [ "$JAVA_VER_CHECK" = "21" ]; then
+                            export JAVA_HOME="$JAVA_DIR"
+                            export PATH=$JAVA_HOME/bin:$PATH
+                            JAVA_FOUND=true
+                            echo -e "${GREEN}✅ Java 21 instalado via download direto${NC}"
+                        fi
+                    fi
+                fi
+            fi
+        fi
+        
+        # Se ainda não encontrou, erro
+        if [ "$JAVA_FOUND" = false ]; then
+            echo -e "${RED}❌ Não foi possível instalar Java 21 automaticamente.${NC}"
+            echo ""
+            echo -e "${YELLOW}💡 SOLUÇÃO ALTERNATIVA: Faça build localmente e faça upload do JAR${NC}"
+            echo ""
+            echo "1. Na sua máquina local (onde você tem Java 21), execute:"
+            echo "   ./gradlew clean build -x test"
+            echo ""
+            echo "2. Faça upload do JAR para Cloud Shell:"
+            echo "   Arquivo: build/libs/mottu-api-0.0.1-SNAPSHOT.jar"
+            echo ""
+            echo "3. No Cloud Shell, crie a pasta e execute:"
+            echo "   mkdir -p build/libs"
+            echo "   mv mottu-api-0.0.1-SNAPSHOT.jar build/libs/"
+            echo "   ./scripts/deploy-jar.sh"
+            echo ""
+            exit 1
         fi
     fi
-    
-    export PATH=$JAVA_HOME/bin:$PATH
-    
-    echo -e "${GREEN}✅ Java 21 instalado${NC}"
+else
+    # Java 21 já está no PATH
+    echo -e "${GREEN}✅ Java 21 já está disponível no PATH${NC}"
 fi
 
 echo "  Java version:"
@@ -291,7 +406,8 @@ timeout 600 ./gradlew clean build -x test --no-daemon || {
     echo -e "${YELLOW}💡 Alternativa: Faça build localmente e faça upload do JAR${NC}"
     echo "  1. Na sua máquina: ./gradlew clean build -x test"
     echo "  2. Faça upload do JAR: build/libs/mottu-api-0.0.1-SNAPSHOT.jar"
-    echo "  3. Execute: ./scripts/deploy-jar-only.sh"
+    echo "  3. No Cloud Shell: mkdir -p build/libs && mv mottu-api-0.0.1-SNAPSHOT.jar build/libs/"
+    echo "  4. Execute: ./scripts/deploy-jar.sh"
     exit 1
 }
 

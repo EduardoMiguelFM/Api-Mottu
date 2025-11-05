@@ -37,8 +37,11 @@ O script faz automaticamente:
 - ✅ Criação do Web App (Java 21)
 - ✅ Configuração de Connection Strings
 - ✅ Configuração de Variáveis de Ambiente
+- ✅ **Instalação automática de Java 21** (via SDKMAN ou download direto)
 - ✅ Build da aplicação
 - ✅ Deploy do JAR
+
+> **Nota**: O script tenta instalar Java 21 automaticamente se não estiver disponível. Se a instalação automática falhar, você pode fazer o build localmente e fazer upload do JAR.
 
 ### Opção 2: Deploy Manual por Etapas
 
@@ -274,7 +277,7 @@ Após o deploy, os seguintes recursos serão criados no Azure:
 
 ## 📝 Notas Importantes
 
-1. **Java 21**: A aplicação requer Java 21. Certifique-se de que o App Service está configurado corretamente.
+1. **Java 21**: A aplicação requer Java 21. O script `deploy-azure-cloud-shell.sh` tenta instalar Java 21 automaticamente via SDKMAN ou download direto. Se a instalação automática falhar, faça o build localmente e faça upload do JAR.
 
 2. **PostgreSQL**: A aplicação usa PostgreSQL Flexible Server. Não há suporte para H2 em produção.
 
