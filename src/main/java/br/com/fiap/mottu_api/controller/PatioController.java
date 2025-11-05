@@ -51,7 +51,7 @@ public class PatioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patio> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Patio> buscarPorId(@PathVariable("id") Long id) {
         try {
             Patio patio = patioService.buscarPorId(id);
             return ResponseEntity.ok(patio);
@@ -61,7 +61,7 @@ public class PatioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patio> atualizar(@PathVariable Long id, @RequestBody @Valid Patio patio) {
+    public ResponseEntity<Patio> atualizar(@PathVariable("id") Long id, @RequestBody @Valid Patio patio) {
         try {
             Patio patioAtualizado = patioService.atualizar(id, patio);
             return ResponseEntity.ok(patioAtualizado);
@@ -71,7 +71,7 @@ public class PatioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@PathVariable("id") Long id) {
         try {
             patioService.excluir(id);
             return ResponseEntity.noContent().build();

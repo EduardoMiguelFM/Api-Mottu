@@ -41,7 +41,7 @@ public class PatioWebController {
     }
 
     @GetMapping("/editar/{id}")
-    public String editarFormulario(@PathVariable Long id, Model model) {
+    public String editarFormulario(@PathVariable("id") Long id, Model model) {
         try {
             Patio patio = patioService.buscarPorId(id);
             model.addAttribute("patio", patio);
@@ -77,7 +77,7 @@ public class PatioWebController {
     }
 
     @PostMapping("/{id}")
-    public String atualizar(@PathVariable Long id, @Valid @ModelAttribute Patio patio,
+    public String atualizar(@PathVariable("id") Long id, @Valid @ModelAttribute Patio patio,
             BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "patios/formulario";
@@ -94,7 +94,7 @@ public class PatioWebController {
     }
 
     @PostMapping("/deletar/{id}")
-    public String deletar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String deletar(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             patioService.deletar(id);
             redirectAttributes.addFlashAttribute("success", "Pátio deletado com sucesso!");
@@ -105,7 +105,7 @@ public class PatioWebController {
     }
 
     @GetMapping("/detalhes/{id}")
-    public String detalhes(@PathVariable Long id, Model model) {
+    public String detalhes(@PathVariable("id") Long id, Model model) {
         try {
             Patio patio = patioService.buscarPorId(id);
             List<Moto> motosDoPatio = motoService.listarTodos().stream()
@@ -135,7 +135,7 @@ public class PatioWebController {
     }
 
     @PostMapping("/{id}/delete")
-    public String excluir(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String excluir(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             patioService.excluir(id);
             redirectAttributes.addFlashAttribute("success", "Pátio excluído com sucesso!");

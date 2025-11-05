@@ -134,9 +134,10 @@ Para instruções detalhadas, troubleshooting e configurações avançadas, cons
 
 Após o deploy (aguarde 2-3 minutos para inicialização):
 
-- **API**: https://motovision-api.azurewebsites.net
-- **Swagger**: https://motovision-api.azurewebsites.net/swagger-ui.html
-- **Interface Web**: https://motovision-api.azurewebsites.net/login
+- **API**: https://motovision-api-8077.azurewebsites.net
+- **Swagger**: https://motovision-api-8077.azurewebsites.net/swagger-ui.html
+- **Interface Web**: https://motovision-api-8077.azurewebsites.net/login
+- **Dashboard**: https://motovision-api-8077.azurewebsites.net/dashboard
 
 #### ⚙️ Configurações Importantes
 
@@ -147,9 +148,9 @@ Após o deploy (aguarde 2-3 minutos para inicialização):
 
 ### 👥 **Usuários de Teste**
 
-- **Admin**: admin@mottu.com.br / admin123
-- **Supervisor**: supervisor@mottu.com.br / admin123
-- **Operador**: operador@mottu.com.br / admin123
+- **Admin**: admin@teste.com / admin123
+- **Supervisor**: supervisor@teste.com / supervisor123
+- **Usuário**: user@teste.com / user123
 
 ### 📊 **Banco de Dados**
 

@@ -43,32 +43,47 @@ O script faz automaticamente:
 
 > **Nota**: O script tenta instalar Java 21 automaticamente se não estiver disponível. Se a instalação automática falhar, você pode fazer o build localmente e fazer upload do JAR.
 
-### Opção 2: Deploy Manual por Etapas
+### Opção 2: Build Local + Upload pelo Portal (Recomendado se não usar Cloud Shell)
 
-Se preferir fazer manualmente:
+Esta é a opção mais simples se você já tem os recursos criados:
 
-#### 1. Criar Recursos Azure
-
-```bash
-# Fazer login no Azure
-az login
-
-# Executar script de criação de recursos
-./scripts/deploy-azure.sh
-```
-
-#### 2. Build da Aplicação
+#### 1. Build da Aplicação (Sua Máquina Local)
 
 ```bash
-# Build do projeto
+# Build do projeto (onde você tem Java 21)
 ./gradlew clean build -x test
 ```
 
-#### 3. Deploy do JAR
+Isso gera: `build/libs/mottu-api-0.0.1-SNAPSHOT.jar`
+
+#### 2. Upload do JAR pelo Portal Azure ⭐ **MAIS SIMPLES**
+
+1. Acesse: https://portal.azure.com
+2. Vá em **App Services** → `motovision-api`
+3. No menu lateral, expanda **"Implantação"** (Deployment) → Clique em **"Centro de Implantação"** (Deployment Center)
+4. Na seção **"Fonte"** (Source), clique em **"Selecionar uma fonte de código"**
+5. Escolha uma das opções em **"Implantação Manual (Push)"**:
+   - **Opção A**: Se houver **"Publicar arquivos (novo)"** ou **"OneDeploy"**, selecione essa opção
+   - **Opção B**: Se não aparecer, você pode usar **"Azure CLI"** ou **"Git Local"** temporariamente
+6. Se aparecer opção de **Upload**, clique e selecione: `build/libs/mottu-api-0.0.1-SNAPSHOT.jar`
+7. Tipo: **JAR**
+8. Clique em **Salvar** ou **Deploy**
+9. Aguarde completar (2-3 minutos)
+
+> **Alternativa mais direta**: Se não encontrar a opção de upload, use o Azure CLI no Cloud Shell (veja seção abaixo)
+
+> **Nota**: Se os recursos Azure ainda não foram criados, use a Opção 1 (script completo) ou siga a seção "Configuração Manual" abaixo.
+
+#### 3. Alternativa: Deploy via Azure CLI
+
+Se preferir usar linha de comando:
 
 ```bash
-# Deploy para App Service
-./scripts/deploy-jar.sh
+az webapp deploy \
+  --resource-group MotoVisionRG \
+  --name motovision-api \
+  --src-path build/libs/mottu-api-0.0.1-SNAPSHOT.jar \
+  --type jar
 ```
 
 ## 🔧 Configuração Manual
@@ -179,6 +194,8 @@ az webapp config appsettings set \
 
 ### 9. Deploy do JAR
 
+**Opção A: Via Azure CLI (linha de comando)**
+
 ```bash
 az webapp deploy \
   --resource-group MotoVisionRG \
@@ -186,6 +203,20 @@ az webapp deploy \
   --src-path build/libs/mottu-api-0.0.1-SNAPSHOT.jar \
   --type jar
 ```
+
+**Opção B: Via Portal Azure (upload direto)**
+
+1. Acesse: https://portal.azure.com
+2. Vá em **App Services** → `motovision-api`
+3. No menu lateral, expanda **"Implantação"** → **"Centro de Implantação"**
+4. Na seção **"Fonte"**, clique em **"Selecionar uma fonte de código"**
+5. Em **"Implantação Manual (Push)"**, selecione **"Publicar arquivos (novo)"** ou **"OneDeploy"** (se disponível)
+6. Se aparecer opção de **Upload**, selecione: `build/libs/mottu-api-0.0.1-SNAPSHOT.jar`
+7. Tipo: **JAR**
+8. Clique em **Salvar** ou **Deploy**
+9. Aguarde completar (2-3 minutos)
+
+> **Nota**: Se a opção de upload direto não aparecer, use o Azure CLI (Opção A acima) que é mais confiável.
 
 ## ✅ Verificação Pós-Deploy
 

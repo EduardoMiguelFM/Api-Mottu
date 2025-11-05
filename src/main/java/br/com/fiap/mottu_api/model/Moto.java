@@ -155,7 +155,7 @@ public class Moto {
                 ", status=" + status +
                 ", setor='" + setor + '\'' +
                 ", corSetor='" + corSetor + '\'' +
-                ", patio=" + patio +
+                ", patioId=" + (patio != null ? patio.getId() : null) +
                 '}';
     }
 }

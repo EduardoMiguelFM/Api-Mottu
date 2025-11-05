@@ -41,25 +41,25 @@ public class MotoController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<Moto> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Moto> buscarPorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(motoService.buscarPorId(id));
     }
 
     @GetMapping("/placa/{placa}")
-    public ResponseEntity<Moto> buscarPorPlaca(@PathVariable String placa) {
+    public ResponseEntity<Moto> buscarPorPlaca(@PathVariable("placa") String placa) {
         return ResponseEntity.ok(motoService.buscarPorPlaca(placa));
     }
 
     @GetMapping("/status")
-    public ResponseEntity<List<Moto>> buscarPorStatus(@RequestParam StatusMoto status) {
+    public ResponseEntity<List<Moto>> buscarPorStatus(@RequestParam("status") StatusMoto status) {
         return ResponseEntity.ok(motoService.buscarPorStatus(status));
     }
 
     @GetMapping("/filtro")
     public ResponseEntity<List<Moto>> filtrarPorStatusSetorCor(
-            @RequestParam(required = false) StatusMoto status,
-            @RequestParam(required = false) String setor,
-            @RequestParam(required = false) String cor) {
+            @RequestParam(value = "status", required = false) StatusMoto status,
+            @RequestParam(value = "setor", required = false) String setor,
+            @RequestParam(value = "cor", required = false) String cor) {
         return ResponseEntity.ok(motoService.filtrarPorStatusSetorCor(status, setor, cor));
     }
 
@@ -77,29 +77,30 @@ public class MotoController {
     }
 
     @PutMapping("/id/{id}")
-    public ResponseEntity<Moto> atualizarPorId(@PathVariable Long id, @RequestBody @Valid MotoDTO dto) {
+    public ResponseEntity<Moto> atualizarPorId(@PathVariable("id") Long id, @RequestBody @Valid MotoDTO dto) {
         return ResponseEntity.ok(motoService.atualizar(id, dto));
     }
 
     @PutMapping("/placa/{placa}")
-    public ResponseEntity<Moto> atualizarPorPlaca(@PathVariable String placa, @RequestBody @Valid MotoDTO dto) {
+    public ResponseEntity<Moto> atualizarPorPlaca(@PathVariable("placa") String placa,
+            @RequestBody @Valid MotoDTO dto) {
         return ResponseEntity.ok(motoService.atualizarPorPlaca(placa, dto));
     }
 
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<Void> deletarPorId(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarPorId(@PathVariable("id") Long id) {
         motoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/placa/{placa}")
-    public ResponseEntity<Void> deletarPorPlaca(@PathVariable String placa) {
+    public ResponseEntity<Void> deletarPorPlaca(@PathVariable("placa") String placa) {
         motoService.deletarPorPlaca(placa);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/patio/setor/{setor}/contagem")
-    public ResponseEntity<Map<String, Object>> contarPorSetor(@PathVariable String setor) {
+    public ResponseEntity<Map<String, Object>> contarPorSetor(@PathVariable("setor") String setor) {
         long quantidade = motoService.contarMotosPorSetor(setor);
         Map<String, Object> response = new HashMap<>();
         response.put("status", "DISPONIVEL");
@@ -108,7 +109,7 @@ public class MotoController {
     }
 
     @GetMapping("/patio/moto/{placa}/status")
-    public ResponseEntity<Map<String, Object>> statusPorPlaca(@PathVariable String placa) {
+    public ResponseEntity<Map<String, Object>> statusPorPlaca(@PathVariable("placa") String placa) {
         return ResponseEntity.ok(motoService.obterStatusPorPlaca(placa));
     }
 }

@@ -40,7 +40,7 @@ public class MotoService {
     }
 
     public Moto buscarPorId(Long id) {
-        return motoRepository.findById(id)
+        return motoRepository.findByIdWithPatio(id)
                 .orElseThrow(() -> new EntityNotFoundException("Moto não encontrada por ID"));
     }
 
@@ -120,6 +120,7 @@ public class MotoService {
         motoExistente.setSetor(moto.getSetor());
         motoExistente.setCorSetor(moto.getCorSetor());
         motoExistente.setPatio(moto.getPatio());
+        motoExistente.setDescricao(moto.getDescricao());
         return motoRepository.save(motoExistente);
     }
 

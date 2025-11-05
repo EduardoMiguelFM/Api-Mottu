@@ -7,7 +7,7 @@ set LOCATION="Brazil South"
 set POSTGRES_SERVER=motovision-postgres-server
 set POSTGRES_DB=motovisiondb
 set POSTGRES_USER=motovisionadmin
-set POSTGRES_PASSWORD=MotoVisionPass123!
+set POSTGRES_PASSWORD=Fiap2025!Secure@Database#Pass
 set APP_NAME=motovision-api
 set APP_PLAN=MotoVisionAppServicePlan
 

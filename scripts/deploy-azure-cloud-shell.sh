@@ -27,7 +27,7 @@ LOCATION="brazilsouth"  # Região do Brasil Sul (suporta PostgreSQL Flexible Ser
 POSTGRES_SERVER="motovision-postgres-$(date +%s | tail -c 5)"  # Nome único com timestamp
 POSTGRES_DB="motovisiondb"
 POSTGRES_USER="motovisionadmin"
-POSTGRES_PASSWORD="MotoVisionPass123!Secure@2025"  # Senha mais segura
+POSTGRES_PASSWORD="Fiap2025!Secure@Database#Pass"  # Senha segura (sem referências a recursos)
 APP_NAME="motovision-api-$(date +%s | tail -c 5)"  # Nome único
 APP_PLAN="MotoVisionAppServicePlan"
 

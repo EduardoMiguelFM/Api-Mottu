@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{fragments/header :: head}">
-    <title
-      th:text="${moto.id != null ? 'Editar Moto' : 'Nova Moto'} + ' - MotoVision'"
-    >
-      Nova Moto - MotoVision
-    </title>
+    <title th:if="${moto.id != null}">Editar Moto - MotoVision</title>
+    <title th:unless="${moto.id != null}">Nova Moto - MotoVision</title>
   </head>
   <body>
     <div th:replace="~{fragments/header :: navbar}"></div>
@@ -167,7 +164,8 @@
                             <select
                               class="form-select"
                               id="patio"
-                              th:field="*{patio.id}"
+                              name="patio.id"
+                              th:attr="data-selected-id=${moto.patio != null ? moto.patio.id : ''}"
                               required
                             >
                               <option value="">Selecione o pátio</option>
@@ -261,14 +259,23 @@
     <script>
       // Atualizar setor e cor automaticamente quando o status mudar
       document.addEventListener("DOMContentLoaded", function () {
-        const statusSelect = document.getElementById("status");
-        if (statusSelect) {
-          statusSelect.addEventListener("change", function () {
-            const status = this.value;
-            const setorField = document.getElementById("setor");
-            const corField = document.getElementById("corSetor");
+        // Selecionar o pátio correto se estiver editando
+        var patioSelect = document.getElementById("patio");
+        if (patioSelect) {
+          var selectedId = patioSelect.getAttribute("data-selected-id");
+          if (selectedId && selectedId !== "") {
+            patioSelect.value = selectedId;
+          }
+        }
 
-            const statusMap = {
+        var statusSelect = document.getElementById("status");
+        if (statusSelect) {
+          function updateSetorCor() {
+            var status = statusSelect.value;
+            var setorField = document.getElementById("setor");
+            var corField = document.getElementById("corSetor");
+
+            var statusMap = {
               DISPONIVEL: { setor: "Setor A", cor: "Verde" },
               RESERVADA: { setor: "Setor B", cor: "Azul" },
               MANUTENCAO: { setor: "Setor C", cor: "Amarelo" },
@@ -282,11 +289,13 @@
               setorField.value = statusMap[status].setor;
               corField.value = statusMap[status].cor;
             }
-          });
+          }
+
+          statusSelect.addEventListener("change", updateSetorCor);
 
           // Executar na carga da página se já houver um status selecionado
           if (statusSelect.value) {
-            statusSelect.dispatchEvent(new Event("change"));
+            updateSetorCor();
           }
         }
       });

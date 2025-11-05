@@ -9,7 +9,7 @@ LOCATION="Brazil South"
 POSTGRES_SERVER="motovision-postgres-server"
 POSTGRES_DB="motovisiondb"
 POSTGRES_USER="motovisionadmin"
-POSTGRES_PASSWORD="MotoVisionPass123!"
+POSTGRES_PASSWORD="Fiap2025!Secure@Database#Pass"
 APP_NAME="motovision-api"
 APP_PLAN="MotoVisionAppServicePlan"
 

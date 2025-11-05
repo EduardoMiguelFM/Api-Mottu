@@ -23,12 +23,12 @@ public class UsuarioPatioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioPatio> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<UsuarioPatio> buscarPorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
         usuarioService.deletar(id);
         return ResponseEntity.noContent().build();
     }

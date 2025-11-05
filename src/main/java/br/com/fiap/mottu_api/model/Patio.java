@@ -102,7 +102,7 @@ public class Patio {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", endereco='" + endereco + '\'' +
-                ", motos=" + motos +
+                ", motosCount=" + (motos != null ? motos.size() : 0) +
                 '}';
     }
 }

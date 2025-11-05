@@ -1,9 +1,11 @@
 package br.com.fiap.mottu_api.controller;
 
 import br.com.fiap.mottu_api.model.Moto;
+import br.com.fiap.mottu_api.model.Patio;
 import br.com.fiap.mottu_api.model.StatusMoto;
 import br.com.fiap.mottu_api.service.MotoService;
 import br.com.fiap.mottu_api.service.PatioService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,9 +28,9 @@ public class MotoWebController {
     }
 
     @GetMapping
-    public String listarMotos(@RequestParam(required = false) String status,
-            @RequestParam(required = false) String setor,
-            @RequestParam(required = false) String cor,
+    public String listarMotos(@RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "setor", required = false) String setor,
+            @RequestParam(value = "cor", required = false) String cor,
             Model model) {
         List<Moto> motos;
 
@@ -71,19 +73,56 @@ public class MotoWebController {
     }
 
     @GetMapping("/editar/{id}")
-    public String editarFormulario(@PathVariable Long id, Model model) {
+    public String editarFormulario(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Moto moto = motoService.buscarPorId(id);
-            System.out.println("DEBUG: Moto encontrada - ID: " + moto.getId() + ", Descrição: " + moto.getDescricao());
+
+            // Verificar se a moto foi encontrada
+            if (moto == null) {
+                redirectAttributes.addFlashAttribute("error", "Moto não encontrada");
+                return "redirect:/motos";
+            }
+
+            // Garantir que descrição não seja null
+            if (moto.getDescricao() == null) {
+                moto.setDescricao("");
+            }
+
+            // Garantir que setor e corSetor não sejam null
+            if (moto.getSetor() == null) {
+                moto.setSetor("");
+            }
+            if (moto.getCorSetor() == null) {
+                moto.setCorSetor("");
+            }
+
+            // Verificar se o patio está carregado
+            if (moto.getPatio() == null) {
+                redirectAttributes.addFlashAttribute("error", "Pátio associado à moto não encontrado");
+                return "redirect:/motos";
+            }
+
+            // Garantir que a lista de pátios existe
+            List<Patio> patios = patioService.listarTodos();
+            if (patios == null) {
+                patios = new java.util.ArrayList<>();
+            }
+
             model.addAttribute("moto", moto);
-            model.addAttribute("patios", patioService.listarTodos());
+            model.addAttribute("patios", patios);
             model.addAttribute("statusList", StatusMoto.values());
-            model.addAttribute("role", "USER"); // Valor padrão
-            return "motos/formulario-simples";
+            model.addAttribute("role", "USER");
+
+            return "motos/formulario";
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", "Moto não encontrada com ID: " + id);
+            return "redirect:/motos";
         } catch (Exception e) {
-            System.out.println("DEBUG: Erro ao carregar moto: " + e.getMessage());
+            System.out.println("DEBUG: Erro ao carregar moto para edição - ID: " + id);
+            System.out.println("DEBUG: Tipo de erro: " + e.getClass().getName());
+            System.out.println("DEBUG: Mensagem: " + e.getMessage());
             e.printStackTrace();
-            model.addAttribute("error", "Erro ao carregar formulário de edição: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Erro ao carregar formulário de edição: " + e.getMessage());
             return "redirect:/motos";
         }
     }
@@ -116,13 +155,26 @@ public class MotoWebController {
     }
 
     @PostMapping("/{id}")
-    public String atualizar(@PathVariable Long id, @Valid @ModelAttribute Moto moto,
+    public String atualizar(@PathVariable("id") Long id,
+            @RequestParam(value = "patio.id", required = false) Long patioId,
+            @Valid @ModelAttribute Moto moto,
             BindingResult result, RedirectAttributes redirectAttributes, Model model) {
+
+        // Se o patio.id foi enviado via request param, carregar o Patio
+        if (patioId != null && (moto.getPatio() == null || moto.getPatio().getId() == null)) {
+            try {
+                Patio patio = patioService.buscarPorId(patioId);
+                moto.setPatio(patio);
+            } catch (Exception e) {
+                result.rejectValue("patio", "error.patio", "Pátio não encontrado");
+            }
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("moto", moto);
             model.addAttribute("patios", patioService.listarTodos());
             model.addAttribute("statusList", StatusMoto.values());
-            return "motos/formulario-simples";
+            return "motos/formulario";
         }
 
         try {
@@ -133,13 +185,16 @@ public class MotoWebController {
             redirectAttributes.addFlashAttribute("success", "Moto atualizada com sucesso!");
             return "redirect:/motos";
         } catch (Exception e) {
+            System.out.println("DEBUG: Erro ao atualizar moto - ID: " + id);
+            System.out.println("DEBUG: Erro: " + e.getMessage());
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Erro ao atualizar moto: " + e.getMessage());
             return "redirect:/motos/editar/" + id;
         }
     }
 
     @PostMapping("/deletar/{id}")
-    public String deletar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String deletar(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             motoService.deletar(id);
             redirectAttributes.addFlashAttribute("success", "Moto deletada com sucesso!");
@@ -150,7 +205,7 @@ public class MotoWebController {
     }
 
     @GetMapping("/detalhes/{id}")
-    public String detalhes(@PathVariable Long id, Model model) {
+    public String detalhes(@PathVariable("id") Long id, Model model) {
         try {
             Moto moto = motoService.buscarPorId(id);
             model.addAttribute("moto", moto);
@@ -220,7 +275,7 @@ public class MotoWebController {
     }
 
     @PostMapping("/{id}/delete")
-    public String excluir(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String excluir(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             motoService.excluir(id);
             redirectAttributes.addFlashAttribute("success", "Moto excluída com sucesso!");
