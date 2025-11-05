@@ -149,12 +149,20 @@ az webapp config set \
 ### 7. Configurar Connection String
 
 ```bash
+# IMPORTANTE: A connection string deve conter a URL completa do PostgreSQL do Azure
+# O formato POSTGRESQLCONNSTR_DefaultConnection é lido automaticamente pelo Spring Boot
 az webapp config connection-string set \
   --resource-group MotoVisionRG \
   --name motovision-api \
   --connection-string-type PostgreSQL \
   --settings POSTGRESQLCONNSTR_DefaultConnection="jdbc:postgresql://motovision-postgres-server.postgres.database.azure.com:5432/motovisiondb?sslmode=require"
 ```
+
+> **Nota**: Certifique-se de que o nome do servidor PostgreSQL está correto. Se você não souber o nome, use:
+>
+> ```bash
+> az postgres flexible-server list --resource-group MotoVisionRG --query "[0].name" -o tsv
+> ```
 
 ### 8. Configurar Variáveis de Ambiente
 
@@ -193,10 +201,23 @@ az webapp show \
 ### 2. Ver Logs
 
 ```bash
+# Logs em tempo real (recomendado)
 az webapp log tail \
   --name motovision-api \
   --resource-group MotoVisionRG
+
+# Ver apenas erros
+az webapp log tail \
+  --name motovision-api \
+  --resource-group MotoVisionRG | grep -i error
+
+# Ver logs do Spring Boot
+az webapp log tail \
+  --name motovision-api \
+  --resource-group MotoVisionRG | grep -i spring
 ```
+
+> **Dica**: Para ver logs enquanto a aplicação está iniciando, use `az webapp log tail` em um terminal separado.
 
 ### 3. Testar Endpoints
 
@@ -225,11 +246,54 @@ az webapp log tail --name motovision-api --resource-group MotoVisionRG | grep -i
 
 ### Problema: Erro de conexão com PostgreSQL
 
+**Erro comum:** `Connection to localhost:5432 refused`
+
 **Solução:**
 
-1. Verificar firewall do PostgreSQL: `az postgres flexible-server firewall-rule list --resource-group MotoVisionRG --name motovision-postgres-server`
-2. Verificar connection string: `az webapp config connection-string list --name motovision-api --resource-group MotoVisionRG`
-3. Testar conexão do banco: `az postgres flexible-server db show --resource-group MotoVisionRG --server-name motovision-postgres-server --database-name motovisiondb`
+1. **Verificar connection string configurada:**
+   ```bash
+   az webapp config connection-string list \
+     --name motovision-api \
+     --resource-group MotoVisionRG
+   ```
+2. **Verificar se está usando o servidor correto nos logs:**
+
+   ```bash
+   az webapp log tail \
+     --name motovision-api \
+     --resource-group MotoVisionRG | grep -i "postgres\|localhost"
+   ```
+
+   Se aparecer `localhost:5432`, a connection string não está sendo lida corretamente.
+
+3. **Reconfigurar connection string:**
+
+   ```bash
+   # Obter nome do servidor PostgreSQL
+   POSTGRES_SERVER=$(az postgres flexible-server list --resource-group MotoVisionRG --query "[0].name" -o tsv)
+
+   # Reconfigurar connection string
+   az webapp config connection-string set \
+     --resource-group MotoVisionRG \
+     --name motovision-api \
+     --connection-string-type PostgreSQL \
+     --settings POSTGRESQLCONNSTR_DefaultConnection="jdbc:postgresql://${POSTGRES_SERVER}.postgres.database.azure.com:5432/motovisiondb?sslmode=require"
+   ```
+
+4. **Verificar firewall do PostgreSQL:**
+
+   ```bash
+   az postgres flexible-server firewall-rule list \
+     --resource-group MotoVisionRG \
+     --name motovision-postgres-server
+   ```
+
+5. **Reiniciar aplicação após correção:**
+   ```bash
+   az webapp restart \
+     --name motovision-api \
+     --resource-group MotoVisionRG
+   ```
 
 ### Problema: Erro 500 ou aplicação não responde
 
@@ -283,9 +347,13 @@ Após o deploy, os seguintes recursos serão criados no Azure:
 
 3. **Profile Cloud**: O profile `cloud` deve estar ativo no App Service (`SPRING_PROFILES_ACTIVE=cloud`).
 
-4. **Flyway**: As migrações são executadas automaticamente na primeira inicialização.
+4. **Connection String**: A connection string é configurada automaticamente pelo script como `POSTGRESQLCONNSTR_DefaultConnection`. O Spring Boot lê essa variável automaticamente quando o profile `cloud` está ativo.
 
-5. **Tempo de Inicialização**: A aplicação pode levar 2-3 minutos para inicializar completamente após o deploy.
+5. **Flyway**: As migrações são executadas automaticamente na primeira inicialização.
+
+6. **Tempo de Inicialização**: A aplicação pode levar 2-3 minutos para inicializar completamente após o deploy.
+
+7. **Troubleshooting Connection String**: Se a aplicação tentar conectar em `localhost:5432`, verifique se a connection string está configurada corretamente no Azure App Service (veja seção Troubleshooting acima).
 
 ## 🆘 Suporte
 
