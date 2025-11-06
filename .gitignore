@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Documentação Interna (não commitada) ###
+Realizar.md
+DEPLOY_AZURE.md

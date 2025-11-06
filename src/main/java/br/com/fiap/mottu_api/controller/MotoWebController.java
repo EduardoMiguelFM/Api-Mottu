@@ -118,10 +118,6 @@ public class MotoWebController {
             redirectAttributes.addFlashAttribute("error", "Moto não encontrada com ID: " + id);
             return "redirect:/motos";
         } catch (Exception e) {
-            System.out.println("DEBUG: Erro ao carregar moto para edição - ID: " + id);
-            System.out.println("DEBUG: Tipo de erro: " + e.getClass().getName());
-            System.out.println("DEBUG: Mensagem: " + e.getMessage());
-            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Erro ao carregar formulário de edição: " + e.getMessage());
             return "redirect:/motos";
         }
@@ -130,10 +126,7 @@ public class MotoWebController {
     @PostMapping
     public String salvar(@Valid @ModelAttribute Moto moto, BindingResult result,
             RedirectAttributes redirectAttributes, Model model) {
-        System.out.println("DEBUG: Tentando salvar moto - Modelo: " + moto.getModelo() + ", Placa: " + moto.getPlaca());
-
         if (result.hasErrors()) {
-            System.out.println("DEBUG: Erros de validação: " + result.getAllErrors());
             model.addAttribute("patios", patioService.listarTodos());
             model.addAttribute("statusList", StatusMoto.values());
             return "motos/formulario";
@@ -147,11 +140,20 @@ public class MotoWebController {
             redirectAttributes.addFlashAttribute("success", "Moto salva com sucesso!");
             return "redirect:/motos";
         } catch (Exception e) {
-            System.out.println("DEBUG: Erro ao salvar moto: " + e.getMessage());
-            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Erro ao salvar moto: " + e.getMessage());
             return "redirect:/motos/novo";
         }
+    }
+
+    @PostMapping({ "/deletar/{id}", "/{id}/delete" })
+    public String deletar(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            motoService.deletar(id);
+            redirectAttributes.addFlashAttribute("success", "Moto deletada com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao deletar moto: " + e.getMessage());
+        }
+        return "redirect:/motos";
     }
 
     @PostMapping("/{id}")
@@ -185,23 +187,9 @@ public class MotoWebController {
             redirectAttributes.addFlashAttribute("success", "Moto atualizada com sucesso!");
             return "redirect:/motos";
         } catch (Exception e) {
-            System.out.println("DEBUG: Erro ao atualizar moto - ID: " + id);
-            System.out.println("DEBUG: Erro: " + e.getMessage());
-            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Erro ao atualizar moto: " + e.getMessage());
             return "redirect:/motos/editar/" + id;
         }
-    }
-
-    @PostMapping("/deletar/{id}")
-    public String deletar(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        try {
-            motoService.deletar(id);
-            redirectAttributes.addFlashAttribute("success", "Moto deletada com sucesso!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Erro ao deletar moto: " + e.getMessage());
-        }
-        return "redirect:/motos";
     }
 
     @GetMapping("/detalhes/{id}")
@@ -220,38 +208,15 @@ public class MotoWebController {
     private void aplicarLogicaSetorCor(Moto moto) {
         StatusMoto status = moto.getStatus();
         if (status != null) {
-            moto.setSetor(obterSetorPorStatus(status));
-            moto.setCorSetor(obterCorPorStatus(status));
+            // Usa métodos do Service para evitar duplicação de código
+            moto.setSetor(motoService.obterSetorPorStatus(status));
+            moto.setCorSetor(motoService.obterCorPorStatus(status));
 
             // Gerar descrição baseada no status se não houver descrição
             if (moto.getDescricao() == null || moto.getDescricao().trim().isEmpty()) {
                 moto.setDescricao(gerarDescricaoPorStatus(status, moto.getModelo()));
             }
         }
-    }
-
-    private String obterSetorPorStatus(StatusMoto status) {
-        return switch (status) {
-            case DISPONIVEL -> "Setor A";
-            case RESERVADA -> "Setor B";
-            case MANUTENCAO -> "Setor C";
-            case FALTA_PECA -> "Setor D";
-            case INDISPONIVEL -> "Setor E";
-            case DANOS_ESTRUTURAIS -> "Setor F";
-            case SINISTRO -> "Setor G";
-        };
-    }
-
-    private String obterCorPorStatus(StatusMoto status) {
-        return switch (status) {
-            case DISPONIVEL -> "Verde";
-            case RESERVADA -> "Azul";
-            case MANUTENCAO -> "Amarelo";
-            case FALTA_PECA -> "Laranja";
-            case INDISPONIVEL -> "Cinza";
-            case DANOS_ESTRUTURAIS -> "Vermelho";
-            case SINISTRO -> "Preto";
-        };
     }
 
     private String gerarDescricaoPorStatus(StatusMoto status, String modelo) {
@@ -274,14 +239,4 @@ public class MotoWebController {
         };
     }
 
-    @PostMapping("/{id}/delete")
-    public String excluir(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        try {
-            motoService.excluir(id);
-            redirectAttributes.addFlashAttribute("success", "Moto excluída com sucesso!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Erro ao excluir moto: " + e.getMessage());
-        }
-        return "redirect:/motos";
-    }
 }

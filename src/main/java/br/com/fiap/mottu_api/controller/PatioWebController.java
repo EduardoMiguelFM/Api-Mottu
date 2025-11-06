@@ -2,6 +2,7 @@ package br.com.fiap.mottu_api.controller;
 
 import br.com.fiap.mottu_api.model.Moto;
 import br.com.fiap.mottu_api.model.Patio;
+import br.com.fiap.mottu_api.model.StatusMoto;
 import br.com.fiap.mottu_api.service.MotoService;
 import br.com.fiap.mottu_api.service.PatioService;
 import jakarta.validation.Valid;
@@ -28,7 +29,22 @@ public class PatioWebController {
     @GetMapping
     public String listarPatios(Model model) {
         List<Patio> patios = patioService.listarTodos();
+        List<Moto> todasMotos = motoService.listarTodos();
+
+        // Calcular estatísticas
+        long motosAtivas = todasMotos.stream()
+                .filter(m -> m.getStatus() == StatusMoto.DISPONIVEL
+                        || m.getStatus() == StatusMoto.RESERVADA)
+                .count();
+
+        long emManutencao = todasMotos.stream()
+                .filter(m -> m.getStatus() == StatusMoto.MANUTENCAO
+                        || m.getStatus() == StatusMoto.FALTA_PECA)
+                .count();
+
         model.addAttribute("patios", patios);
+        model.addAttribute("motosAtivas", motosAtivas);
+        model.addAttribute("emManutencao", emManutencao);
         model.addAttribute("role", "USER"); // Valor padrão
         return "patios/lista";
     }
@@ -56,11 +72,7 @@ public class PatioWebController {
     @PostMapping
     public String salvar(@Valid @ModelAttribute Patio patio, BindingResult result,
             RedirectAttributes redirectAttributes, Model model) {
-        System.out.println(
-                "DEBUG: Tentando salvar pátio - Nome: " + patio.getNome() + ", Endereço: " + patio.getEndereco());
-
         if (result.hasErrors()) {
-            System.out.println("DEBUG: Erros de validação: " + result.getAllErrors());
             return "patios/formulario";
         }
 
@@ -69,8 +81,6 @@ public class PatioWebController {
             redirectAttributes.addFlashAttribute("success", "Pátio salvo com sucesso!");
             return "redirect:/patios";
         } catch (Exception e) {
-            System.out.println("DEBUG: Erro ao salvar pátio: " + e.getMessage());
-            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Erro ao salvar pátio: " + e.getMessage());
             return "redirect:/patios/novo";
         }
@@ -93,7 +103,7 @@ public class PatioWebController {
         }
     }
 
-    @PostMapping("/deletar/{id}")
+    @PostMapping({ "/deletar/{id}", "/{id}/delete" })
     public String deletar(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             patioService.deletar(id);
@@ -134,14 +144,4 @@ public class PatioWebController {
         }
     }
 
-    @PostMapping("/{id}/delete")
-    public String excluir(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        try {
-            patioService.excluir(id);
-            redirectAttributes.addFlashAttribute("success", "Pátio excluído com sucesso!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Erro ao excluir pátio: " + e.getMessage());
-        }
-        return "redirect:/patios";
-    }
 }

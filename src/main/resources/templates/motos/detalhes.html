@@ -271,7 +271,8 @@
               id="deleteModal"
               tabindex="-1"
               aria-labelledby="deleteModalLabel"
-              aria-hidden="true"
+              aria-modal="true"
+              role="dialog"
             >
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -284,6 +285,7 @@
                       class="btn-close"
                       data-bs-dismiss="modal"
                       aria-label="Close"
+                      onclick="fecharModalDetalhes()"
                     ></button>
                   </div>
                   <div class="modal-body">
@@ -301,6 +303,7 @@
                       type="button"
                       class="btn btn-secondary"
                       data-bs-dismiss="modal"
+                      onclick="fecharModalDetalhes()"
                     >
                       Cancelar
                     </button>
@@ -308,7 +311,13 @@
                       th:action="@{/motos/deletar/{id}(id=${moto.id})}"
                       method="post"
                       class="d-inline"
+                      id="deleteFormDetalhes"
                     >
+                      <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}"
+                      />
                       <button type="submit" class="btn btn-danger">
                         <i class="fas fa-trash me-1"></i>Excluir
                       </button>
@@ -323,5 +332,63 @@
     </div>
 
     <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script>
+      // Função para fechar modal de detalhes
+      function fecharModalDetalhes() {
+        const modalElement = document.getElementById("deleteModal");
+        if (modalElement) {
+          if (typeof bootstrap !== "undefined") {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+              modal.hide();
+            } else {
+              const newModal = new bootstrap.Modal(modalElement);
+              newModal.hide();
+            }
+            // Restaurar aria-hidden quando fechar
+            modalElement.setAttribute("aria-hidden", "true");
+            modalElement.removeAttribute("aria-modal");
+          } else {
+            // Fallback manual
+            modalElement.style.display = "none";
+            modalElement.classList.remove("show");
+            modalElement.classList.add("fade");
+            modalElement.setAttribute("aria-hidden", "true");
+            modalElement.removeAttribute("aria-modal");
+            document.body.classList.remove("modal-open");
+            const allBackdrops = document.querySelectorAll(".modal-backdrop");
+            allBackdrops.forEach((b) => b.remove());
+          }
+        }
+      }
+
+      // Gerenciar estado ARIA do modal e garantir que funcione
+      document.addEventListener("DOMContentLoaded", function () {
+        const modalElement = document.getElementById("deleteModal");
+        if (modalElement) {
+          // Quando modal estiver prestes a abrir, garantir estado correto
+          modalElement.addEventListener("show.bs.modal", function () {
+            modalElement.removeAttribute("aria-hidden");
+            modalElement.setAttribute("aria-modal", "true");
+          });
+
+          // Quando modal abrir completamente, garantir estado correto
+          modalElement.addEventListener("shown.bs.modal", function () {
+            modalElement.removeAttribute("aria-hidden");
+            modalElement.setAttribute("aria-modal", "true");
+          });
+
+          // Quando modal fechar, restaurar aria-hidden
+          modalElement.addEventListener("hidden.bs.modal", function () {
+            modalElement.setAttribute("aria-hidden", "true");
+            modalElement.removeAttribute("aria-modal");
+            document.body.classList.remove("modal-open");
+            const allBackdrops = document.querySelectorAll(".modal-backdrop");
+            allBackdrops.forEach((b) => b.remove());
+          });
+        }
+      });
+    </script>
   </body>
 </html>

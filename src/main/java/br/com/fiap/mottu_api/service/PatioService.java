@@ -56,11 +56,4 @@ public class PatioService {
                                 .filter(m -> m.getStatus() == status)
                                 .count()));
     }
-
-    public void excluir(Long id) {
-        if (!patioRepository.existsById(id)) {
-            throw new EntityNotFoundException("Pátio com ID " + id + " não encontrado");
-        }
-        patioRepository.deleteById(id);
-    }
 }

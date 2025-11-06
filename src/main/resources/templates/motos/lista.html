@@ -299,15 +299,27 @@
     </div>
 
     <!-- Modal de Confirmação -->
-    <div class="modal fade" id="confirmModal" tabindex="-1">
+    <div
+      class="modal fade"
+      id="confirmModal"
+      tabindex="-1"
+      aria-labelledby="confirmModalLabel"
+      aria-modal="true"
+      role="dialog"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Confirmar Exclusão</h5>
+            <h5 class="modal-title" id="confirmModalLabel">
+              Confirmar Exclusão
+            </h5>
             <button
               type="button"
               class="btn-close"
               data-bs-dismiss="modal"
+              aria-label="Close"
+              id="closeBtn"
+              onclick="fecharModal()"
             ></button>
           </div>
           <div class="modal-body">
@@ -319,6 +331,8 @@
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
+              id="cancelBtn"
+              onclick="fecharModal()"
             >
               Cancelar
             </button>
@@ -339,18 +353,108 @@
 
     <script>
       function confirmarExclusao(id) {
-        document.getElementById("deleteForm").action =
-          "/motos/" + id + "/delete";
+        // Atualizar action do formulário
+        const deleteForm = document.getElementById("deleteForm");
+        deleteForm.action = "/motos/" + id + "/delete";
 
-        // Aguardar o Bootstrap carregar
-        if (typeof bootstrap !== "undefined") {
-          new bootstrap.Modal(document.getElementById("confirmModal")).show();
+        // Obter elemento do modal
+        const modalElement = document.getElementById("confirmModal");
+
+        // Aguardar o DOM estar pronto
+        if (typeof bootstrap !== "undefined" && modalElement) {
+          // Verificar se já existe uma instância do Bootstrap
+          const existingModal = bootstrap.Modal.getInstance(modalElement);
+          if (existingModal) {
+            existingModal.dispose();
+          }
+
+          // Remover aria-hidden antes de mostrar o modal
+          modalElement.removeAttribute("aria-hidden");
+          modalElement.setAttribute("aria-modal", "true");
+
+          // Criar nova instância do modal
+          const modal = new bootstrap.Modal(modalElement, {
+            backdrop: true,
+            keyboard: true,
+            focus: true,
+          });
+
+          // Mostrar o modal
+          modal.show();
         } else {
-          // Fallback se Bootstrap não estiver carregado
-          document.getElementById("confirmModal").style.display = "block";
-          document.getElementById("confirmModal").classList.add("show");
+          // Fallback simples
+          modalElement.style.display = "block";
+          modalElement.classList.add("show");
+          modalElement.classList.remove("fade");
+          modalElement.removeAttribute("aria-hidden");
+          modalElement.setAttribute("aria-modal", "true");
+          document.body.classList.add("modal-open");
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop fade show";
+          backdrop.id = "modalBackdrop";
+          document.body.appendChild(backdrop);
         }
       }
+
+      // Função para fechar modal manualmente
+      function fecharModal() {
+        const modalElement = document.getElementById("confirmModal");
+        if (modalElement) {
+          if (typeof bootstrap !== "undefined") {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+              modal.hide();
+            } else {
+              const newModal = new bootstrap.Modal(modalElement);
+              newModal.hide();
+            }
+            // Restaurar aria-hidden quando fechar
+            modalElement.setAttribute("aria-hidden", "true");
+            modalElement.removeAttribute("aria-modal");
+          } else {
+            // Fallback manual
+            modalElement.style.display = "none";
+            modalElement.classList.remove("show");
+            modalElement.classList.add("fade");
+            modalElement.setAttribute("aria-hidden", "true");
+            modalElement.removeAttribute("aria-modal");
+            document.body.classList.remove("modal-open");
+            const backdrop = document.getElementById("modalBackdrop");
+            if (backdrop) {
+              backdrop.remove();
+            }
+            // Remover todos os backdrops que possam ter sido criados
+            const allBackdrops = document.querySelectorAll(".modal-backdrop");
+            allBackdrops.forEach((b) => b.remove());
+          }
+        }
+      }
+
+      // Limpar backdrop quando modal fechar (fallback)
+      document.addEventListener("DOMContentLoaded", function () {
+        const modalElement = document.getElementById("confirmModal");
+        if (modalElement) {
+          // Quando modal abrir, remover aria-hidden
+          modalElement.addEventListener("shown.bs.modal", function () {
+            modalElement.removeAttribute("aria-hidden");
+            modalElement.setAttribute("aria-modal", "true");
+          });
+
+          // Quando modal fechar, restaurar aria-hidden
+          modalElement.addEventListener("hidden.bs.modal", function () {
+            modalElement.setAttribute("aria-hidden", "true");
+            modalElement.removeAttribute("aria-modal");
+            const backdrop = document.getElementById("modalBackdrop");
+            if (backdrop) {
+              backdrop.remove();
+            }
+            document.body.classList.remove("modal-open");
+            // Remover todos os backdrops
+            const allBackdrops = document.querySelectorAll(".modal-backdrop");
+            allBackdrops.forEach((b) => b.remove());
+          });
+        }
+      });
     </script>
   </body>
 </html>

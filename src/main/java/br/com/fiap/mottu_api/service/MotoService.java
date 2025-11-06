@@ -117,8 +117,16 @@ public class MotoService {
         motoExistente.setModelo(moto.getModelo());
         motoExistente.setPlaca(moto.getPlaca());
         motoExistente.setStatus(moto.getStatus());
-        motoExistente.setSetor(moto.getSetor());
-        motoExistente.setCorSetor(moto.getCorSetor());
+
+        // Atualiza setor e cor automaticamente baseado no novo status
+        if (moto.getStatus() != null) {
+            motoExistente.setSetor(definirSetorPorStatus(moto.getStatus()));
+            motoExistente.setCorSetor(definirCorPorStatus(moto.getStatus()));
+        } else {
+            motoExistente.setSetor(moto.getSetor());
+            motoExistente.setCorSetor(moto.getCorSetor());
+        }
+
         motoExistente.setPatio(moto.getPatio());
         motoExistente.setDescricao(moto.getDescricao());
         return motoRepository.save(motoExistente);
@@ -140,7 +148,7 @@ public class MotoService {
 
     public void deletar(Long id) {
         if (!motoRepository.existsById(id)) {
-            throw new EntityNotFoundException("Moto não encontrada para exclusão por ID");
+            throw new EntityNotFoundException("Moto não encontrada para exclusão por ID: " + id);
         }
         motoRepository.deleteById(id);
     }
@@ -151,8 +159,12 @@ public class MotoService {
     }
 
     public long contarMotosPorSetor(String setor) {
+        // Normaliza o formato do setor para busca
+        String setorNormalizado = setor.startsWith("Setor ") ? setor : "Setor " + setor;
+        final String setorFinal = setorNormalizado;
+
         return motoRepository.findAll().stream()
-                .filter(m -> m.getSetor().equalsIgnoreCase("Setor " + setor))
+                .filter(m -> m.getSetor() != null && m.getSetor().equalsIgnoreCase(setorFinal))
                 .count();
     }
 
@@ -160,7 +172,7 @@ public class MotoService {
         Moto moto = buscarPorPlaca(placa);
         Map<String, Object> response = new HashMap<>();
         response.put("status", moto.getStatus());
-        response.put("setor", moto.getSetor().replace("Setor ", ""));
+        response.put("setor", moto.getSetor() != null ? moto.getSetor().replace("Setor ", "") : "");
         response.put("cor", moto.getCorSetor());
         return response;
     }
@@ -177,10 +189,13 @@ public class MotoService {
         return dto;
     }
 
-    public void excluir(Long id) {
-        if (!motoRepository.existsById(id)) {
-            throw new EntityNotFoundException("Moto com ID " + id + " não encontrada");
-        }
-        motoRepository.deleteById(id);
+    // Método público para obter setor por status (usado pelo Controller)
+    public String obterSetorPorStatus(StatusMoto status) {
+        return definirSetorPorStatus(status);
+    }
+
+    // Método público para obter cor por status (usado pelo Controller)
+    public String obterCorPorStatus(StatusMoto status) {
+        return definirCorPorStatus(status);
     }
 }

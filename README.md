@@ -379,5 +379,18 @@ GitHub → Azure CLI → App Service ← PostgreSQL
 ## 📚 **Disciplinas Integradas**
 
 - **JAVA ADVANCED**: API RESTful com Spring Boot
-- **MOBILE APPLICATION DEVELOPMENT**: Integração com aplicativo mobile
+- **COMPLIANCE, QUALITY ASSURANCE & TESTS**: Testes, validações e garantia de qualidade
 - **DEVOPS TOOLS & CLOUD COMPUTING**: Deploy no Azure App Service
+
+---
+
+## 📹 **Vídeo de Apresentação**
+
+- ***
+
+## 🔗 **Links Importantes**
+
+- **Aplicação Online**: https://motovision-api-8077.azurewebsites.net
+- **Swagger UI**: https://motovision-api-8077.azurewebsites.net/swagger-ui.html
+- **Dashboard**: https://motovision-api-8077.azurewebsites.net/dashboard
+- **Login**: https://motovision-api-8077.azurewebsites.net/login

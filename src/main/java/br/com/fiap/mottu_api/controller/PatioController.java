@@ -73,7 +73,7 @@ public class PatioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable("id") Long id) {
         try {
-            patioService.excluir(id);
+            patioService.deletar(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
