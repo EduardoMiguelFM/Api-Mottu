@@ -89,46 +89,119 @@ docker run -p 8080:8080 mottu-api
 
 ### ☁️ **Deploy no Azure (App Service + PostgreSQL)**
 
-#### 🚀 Deploy Rápido com Azure Cloud Shell (Recomendado)
+#### 📦 Preparar artefato local
 
 ```bash
-# 1. Acessar Azure Cloud Shell (portal.azure.com)
-# 2. Fazer upload do projeto ou clonar do repositório
-git clone <seu-repositorio>
+git clone https://github.com/seu-usuario/Api-Mottu.git
 cd Api-Mottu
-
-# 3. Tornar script executável
-chmod +x scripts/deploy-azure-cloud-shell.sh
-
-# 4. Executar deploy completo automatizado
-./scripts/deploy-azure-cloud-shell.sh
+./gradlew clean bootJar
 ```
 
-O script automatiza todo o processo:
+O arquivo `build/libs/mottu-api-*.jar` será enviado para o Azure.
 
-- ✅ Criação de recursos Azure (PostgreSQL + App Service)
-- ✅ Configuração de conexão e variáveis de ambiente
-- ✅ Build da aplicação
-- ✅ Deploy do JAR
+#### ☁️ Passo a passo manual no Azure Cloud Shell
 
-#### 📋 Deploy Manual por Etapas
+1. Abra o [Portal Azure](https://portal.azure.com) e inicie o **Cloud Shell** (bash).
+2. Carregue o JAR gerado (botão `Upload/Download`) ou clone o repositório dentro do shell:
+   ```bash
+   git clone https://github.com/seu-usuario/Api-Mottu.git
+   cd Api-Mottu
+   ```
+3. Defina variáveis para reutilizar nos comandos:
+   ```bash
+   export RESOURCE_GROUP=MotoVisionRG
+   export LOCATION=brazilsouth
+   export APP_SERVICE_PLAN=motovision-plan
+   export WEBAPP_NAME=motovision-api-8077
+   export DB_SERVER=motovision-db-server
+   export DB_NAME=motovisiondb
+   export DB_ADMIN=motovisionadmin
+   export DB_PASSWORD='DefinaUmaSenhaForte123!'
+   ```
+4. Crie o resource group:
+   ```bash
+   az group create \
+     --name $RESOURCE_GROUP \
+     --location $LOCATION
+   ```
+5. Provisione o PostgreSQL Flexible Server:
 
-```bash
-# 1. Criar recursos Azure
-./scripts/deploy-azure.sh
+   ```bash
+   az postgres flexible-server create \
+     --resource-group $RESOURCE_GROUP \
+     --name $DB_SERVER \
+     --location $LOCATION \
+     --admin-user $DB_ADMIN \
+     --admin-password $DB_PASSWORD \
+     --sku-name Standard_B1ms \
+     --storage-size 32 \
+     --tier Burstable \
+     --version 16
 
-# 2. Build da aplicação
-./scripts/build.sh
+   az postgres flexible-server db create \
+     --resource-group $RESOURCE_GROUP \
+     --server-name $DB_SERVER \
+     --database-name $DB_NAME
 
-# 3. Deploy do JAR
-./scripts/deploy-jar.sh
-```
+   az postgres flexible-server firewall-rule create \
+     --resource-group $RESOURCE_GROUP \
+     --server-name $DB_SERVER \
+     --name AllowAzureServices \
+     --rule-type AzureServices
+   ```
 
-#### 📚 Documentação Completa
+6. Monte a connection string:
+   ```bash
+   export JDBC_URL="jdbc:postgresql://$DB_SERVER.postgres.database.azure.com:5432/$DB_NAME?sslmode=require"
+   ```
+7. Crie o App Service Plan e a Web App:
 
-Para instruções detalhadas, troubleshooting e configurações avançadas, consulte:
+   ```bash
+   az appservice plan create \
+     --name $APP_SERVICE_PLAN \
+     --resource-group $RESOURCE_GROUP \
+     --sku B1 \
+     --is-linux
 
-- **[DEPLOY_AZURE.md](DEPLOY_AZURE.md)** - Guia completo de deploy
+   az webapp create \
+     --resource-group $RESOURCE_GROUP \
+     --plan $APP_SERVICE_PLAN \
+     --name $WEBAPP_NAME \
+     --runtime "JAVA|21-java21"
+   ```
+
+8. Configure as variáveis de ambiente:
+   ```bash
+   az webapp config appsettings set \
+     --resource-group $RESOURCE_GROUP \
+     --name $WEBAPP_NAME \
+     --settings SPRING_DATASOURCE_URL="$JDBC_URL" \
+                SPRING_DATASOURCE_USERNAME="$DB_ADMIN" \
+                SPRING_DATASOURCE_PASSWORD="$DB_PASSWORD" \
+                SPRING_PROFILES_ACTIVE="cloud"
+   ```
+9. Publique o JAR (via ZIP Deploy):
+   ```bash
+   cd build/libs
+   zip app.zip mottu-api-*.jar
+   az webapp deploy \
+     --resource-group $RESOURCE_GROUP \
+     --name $WEBAPP_NAME \
+     --type zip \
+     --src-path app.zip
+   cd ../..
+   ```
+10. Reinicie a aplicação e monitore:
+
+    ```bash
+    az webapp restart \
+      --resource-group $RESOURCE_GROUP \
+      --name $WEBAPP_NAME
+
+    az webapp log tail \
+      --resource-group $RESOURCE_GROUP \
+      --name $WEBAPP_NAME
+    ```
 
 #### 🌐 Acessar aplicação na nuvem
 
@@ -142,7 +215,7 @@ Após o deploy (aguarde 2-3 minutos para inicialização):
 #### ⚙️ Configurações Importantes
 
 - **Java 21**: Aplicação requer Java 21 (configurado automaticamente)
-- **PostgreSQL**: Usa Azure Database for PostgreSQL (não H2)
+- **PostgreSQL**: Usa Azure Database for PostgreSQL 
 - **Profile Cloud**: Ativado automaticamente (`SPRING_PROFILES_ACTIVE=cloud`)
 - **Flyway**: Migrações executadas automaticamente na primeira inicialização
 
