@@ -1,0 +1,328 @@
+{
+	"info": {
+		"_postman_id": "b27e6286-f061-4e7d-9adc-9bf320d34e02",
+		"name": "MotoVision API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38897935",
+		"_collection_link": "https://mechaassure.postman.co/workspace/MechaAssure~573d3805-1015-4a43-bb53-05968d1326d8/collection/38897935-b27e6286-f061-4e7d-9adc-9bf320d34e02?action=share&source=collection_link&creator=38897935"
+	},
+	"item": [
+		{
+			"name": "Cadastrar nova Moto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 201\", () => pm.response.to.have.status(201));\r",
+							"     const data = pm.response.json();\r",
+							"     pm.environment.set(\"motoId\", data.id);\r",
+							"    pm.environment.set(\"motoPlaca\", data.placa);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin@teste.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"modelo\": \"Honda Biz\",\r\n  \"placa\": \"TEST139\", \r\n  \"status\": \"DISPONIVEL\",\r\n  \"descricao\": \"Moto disponivel e pronto para uso\",\r\n  \"nomePatio\": \"Pátio Pinheiros\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/motos",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"motos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar Motos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+							"     const data = pm.response.json();\r",
+							"     pm.test(\"Retorna array\", () => pm.expect(Array.isArray(data)).to.be.true);\r",
+							"     pm.test(\"Contém ao menos uma moto\", () =>\r",
+							"       pm.expect(data.length).to.be.above(0)\r",
+							"     );"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin@teste.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/motos/todos",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"motos",
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validar Dados Inválidos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 400/404\", () => {\r",
+							"  pm.expect([400, 404]).to.include(pm.response.code);\r",
+							"});\r",
+							"const invalida = pm.response.json();\r",
+							"pm.test(\"Contém mensagem de erro\", () => {\r",
+							"  pm.expect(invalida).to.have.any.keys(\"message\", \"erro\", \"errors\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin@teste.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n       \"modelo\": \"\",\r\n       \"placa\": \"123\",\r\n       \"status\": \"DISPONIVEL\",\r\n       \"nomePatio\": \"\"\r\n     }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/motos",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"motos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Atualizar moto por ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+							"     const data = pm.response.json();\r",
+							"     pm.test(\"Retorna placa original\", () =>\r",
+							"       pm.expect(data.placa).to.eql(\"TEST139\")\r",
+							"     );\r",
+							"     pm.test(\"Status atualizado\", () =>\r",
+							"       pm.expect(data.status).to.eql(\"FALTA_PECA\")\r",
+							"     );\r",
+							"     pm.test(\"Mantém modelo\", () => pm.expect(data.modelo).to.eql(\"Honda Biz\"));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin@teste.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n       \"modelo\": \"Honda Biz\",\r\n       \"placa\": \"TEST139\",\r\n       \"status\": \"FALTA_PECA\",\r\n       \"nomePatio\": \"Pátio Pinheiros\"\r\n     }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/motos/id/{{motoId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"motos",
+						"id",
+						"{{motoId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Excluir Moto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 ou 204\", () => {\r",
+							"       pm.expect([200, 204]).to.include(pm.response.code);\r",
+							"     });\r",
+							"pm.test(\"Resposta confirma exclusão\", () => {\r",
+							"  if (pm.response.code === 200) {\r",
+							"    const data = pm.response.json();\r",
+							"    pm.expect(data).to.have.any.keys(\"mensagem\", \"status\", \"deleted\");\r",
+							"  }\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin@teste.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/motos/id/{{motoId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"motos",
+						"id",
+						"{{motoId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
