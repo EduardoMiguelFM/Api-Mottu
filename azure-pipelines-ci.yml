@@ -30,8 +30,8 @@ stages:
             displayName: "Set up JDK"
             inputs:
               versionSpec: "$(javaVersion)"
-              jdkArchitecture: "x64"
-              jdkSource: "PreInstalled"
+              jdkArchitectureOption: "x64"
+              jdkSourceOption: "PreInstalled"
 
           - script: chmod +x gradlew
             displayName: "Make gradlew executable"
@@ -65,10 +65,10 @@ stages:
             displayName: "Instalar Newman"
 
           - script: >
-              newman run postman/MotoVision.postman_collection.json
-              --environment postman/MotoVision.env.postman_environment.json
+              newman run "postman/MotoVision API Tests.postman_collection.json"
+              --environment "postman/MotoVision.postman_environment.json"
               --reporters cli,junit
-              --reporter-junit-export postman/newman-results.xml
+              --reporter-junit-export "postman/newman-results.xml"
             displayName: "Executar testes Postman (Newman)"
 
           - task: PublishTestResults@2

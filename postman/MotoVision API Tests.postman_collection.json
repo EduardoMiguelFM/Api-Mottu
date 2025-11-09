@@ -15,10 +15,9 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status 201\", () => pm.response.to.have.status(201));\r",
-							"     const data = pm.response.json();\r",
-							"     pm.environment.set(\"motoId\", data.id);\r",
-							"    pm.environment.set(\"motoPlaca\", data.placa);\r",
-							""
+							"const createResponse = pm.response.json();\r",
+							"pm.environment.set(\"motoId\", createResponse.id);\r",
+							"pm.environment.set(\"motoPlaca\", createResponse.placa);\r"
 						],
 						"type": "text/javascript",
 						"packages": {},
@@ -85,11 +84,11 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
-							"     const data = pm.response.json();\r",
-							"     pm.test(\"Retorna array\", () => pm.expect(Array.isArray(data)).to.be.true);\r",
-							"     pm.test(\"Contém ao menos uma moto\", () =>\r",
-							"       pm.expect(data.length).to.be.above(0)\r",
-							"     );"
+							"const listResponse = pm.response.json();\r",
+							"pm.test(\"Retorna array\", () => pm.expect(Array.isArray(listResponse)).to.be.true);\r",
+							"pm.test(\"Contém ao menos uma moto\", () =>\r",
+							"  pm.expect(listResponse.length).to.be.above(0)\r",
+							");"
 						],
 						"type": "text/javascript",
 						"packages": {},
@@ -210,15 +209,14 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
-							"     const data = pm.response.json();\r",
-							"     pm.test(\"Retorna placa original\", () =>\r",
-							"       pm.expect(data.placa).to.eql(\"TEST139\")\r",
-							"     );\r",
-							"     pm.test(\"Status atualizado\", () =>\r",
-							"       pm.expect(data.status).to.eql(\"FALTA_PECA\")\r",
-							"     );\r",
-							"     pm.test(\"Mantém modelo\", () => pm.expect(data.modelo).to.eql(\"Honda Biz\"));\r",
-							""
+							"const updateResponse = pm.response.json();\r",
+							"pm.test(\"Retorna placa original\", () =>\r",
+							"  pm.expect(updateResponse.placa).to.eql(\"TEST139\")\r",
+							");\r",
+							"pm.test(\"Status atualizado\", () =>\r",
+							"  pm.expect(updateResponse.status).to.eql(\"FALTA_PECA\")\r",
+							");\r",
+							"pm.test(\"Mantém modelo\", () => pm.expect(updateResponse.modelo).to.eql(\"Honda Biz\"));\r"
 						],
 						"type": "text/javascript",
 						"packages": {},
