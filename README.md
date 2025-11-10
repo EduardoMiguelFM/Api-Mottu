@@ -390,7 +390,7 @@ Após o deploy (aguarde 2-3 minutos para inicialização):
 
 - **Aplicação Online**: https://motovision-api-8077.azurewebsites.net
 - **Swagger UI**: https://motovision-api-8077.azurewebsites.net/swagger-ui.html
-- **Login**: https://motovision-api-8077.azurewebsites.net/login
+- **Projeto Azure DevOps**: https://dev.azure.com/RM555871/Sprint%204%20–%20Azure%20DevOps
 
 ---
 
