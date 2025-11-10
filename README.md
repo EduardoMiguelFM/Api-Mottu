@@ -232,67 +232,6 @@ Após o deploy (aguarde 2-3 minutos para inicialização):
 
 **Nota**: O projeto utiliza Flyway para migração automática do banco de dados. As tabelas e dados iniciais são criados automaticamente na primeira execução.
 
----
-
-## 📁 Estrutura de Pastas
-
-```
-mottu-api/
-├── src/main/java/br/com/fiap/mottu_api/
-│   ├── controller/           # Controllers REST e Web
-│   │   ├── MotoController.java
-│   │   ├── MotoWebController.java
-│   │   ├── PatioController.java
-│   │   ├── PatioWebController.java
-│   │   ├── UsuarioPatioController.java
-│   │   └── WebController.java
-│   ├── dto/                  # Data Transfer Objects
-│   │   ├── MotoDTO.java
-│   │   └── MotoResponseDTO.java
-│   ├── model/                # Entidades JPA
-│   │   ├── Moto.java
-│   │   ├── Patio.java
-│   │   ├── UsuarioPatio.java
-│   │   └── StatusMoto.java
-│   ├── repository/           # Repositories JPA
-│   │   ├── MotoRepository.java
-│   │   ├── PatioRepository.java
-│   │   └── UsuarioPatioRepository.java
-│   ├── service/              # Lógica de negócio
-│   │   ├── MotoService.java
-│   │   ├── PatioService.java
-│   │   └── UsuarioPatioService.java
-│   ├── config/               # Configurações
-│   │   └── SecurityConfig.java
-│   ├── exception/            # Tratamento de exceções
-│   │   └── GlobalExceptionHandler.java
-│   └── MottuApiApplication.java
-├── src/main/resources/
-│   ├── application.properties        # Configurações locais
-│   ├── application-cloud.properties  # Configurações Azure
-│   ├── db/migration/                 # Scripts Flyway
-│   │   ├── V1__Create_tables.sql
-│   │   ├── V2__Insert_initial_patios.sql
-│   │   ├── V3__Insert_initial_users.sql
-│   │   ├── V4__Insert_sample_motos.sql
-│   │   └── ... (outras migrações)
-│   └── templates/                    # Templates Thymeleaf
-│       ├── layout.html
-│       ├── login.html
-│       ├── dashboard.html
-│       ├── motos/
-│       └── patios/
-├── scripts/                          # Scripts de deploy e teste
-│   ├── deploy-azure.sh              # Criar recursos Azure
-│   ├── build.sh                     # Build da aplicação
-│   ├── deploy-jar.sh                # Deploy para Azure
-│   ├── test-api.sh                  # Testes automatizados
-│   └── script_bd.sql                # Script do banco
-├── .deployment                       # Configuração Azure
-├── Dockerfile                        # Container Docker
-├── build.gradle                      # Dependências Gradle
-└── README.md                         # Documentação
-```
 
 ---
 
@@ -418,14 +357,6 @@ mottu-api/
 - **Azure Database for PostgreSQL**: Banco de dados gerenciado
 - **Azure CLI**: Automação da criação de recursos
 
-### **Arquitetura de Deploy:**
-
-```
-GitHub → Azure CLI → App Service ← PostgreSQL
-                    ↓
-              Aplicação Spring Boot
-```
-
 ### **Scripts de Automação:**
 
 - `scripts/deploy-azure.sh` - Criação de recursos Azure
@@ -441,6 +372,28 @@ GitHub → Azure CLI → App Service ← PostgreSQL
 
 ---
 
+## 📚 **Disciplinas Integradas**
+
+- **JAVA ADVANCED**: API RESTful com Spring Boot
+- **COMPLIANCE, QUALITY ASSURANCE & TESTS**: Testes, validações e garantia de qualidade
+- **DEVOPS TOOLS & CLOUD COMPUTING**: Deploy no Azure App Service
+- **MOBILE APPLICATION DEVELOPMENT**: API sendo consumida por app mobile
+
+---
+
+## 📹 **Vídeo de Apresentação**
+
+- **Vídeo JAVA**: https://youtu.be/RK14AZZSbVU
+- **Vídeo DEVOPS**: https://youtu.be/MrozDZ37MCI
+
+## 🔗 **Links Importantes**
+
+- **Aplicação Online**: https://motovision-api-8077.azurewebsites.net
+- **Swagger UI**: https://motovision-api-8077.azurewebsites.net/swagger-ui.html
+- **Login**: https://motovision-api-8077.azurewebsites.net/login
+
+---
+
 ## 👥 Equipe
 
 - Eduardo Miguel Forato Monteiro – RM 555871
@@ -448,22 +401,3 @@ GitHub → Azure CLI → App Service ← PostgreSQL
 - Murillo Ari Ferreira Sant'Anna – RM 557183
 
 ---
-
-## 📚 **Disciplinas Integradas**
-
-- **JAVA ADVANCED**: API RESTful com Spring Boot
-- **COMPLIANCE, QUALITY ASSURANCE & TESTS**: Testes, validações e garantia de qualidade
-- **DEVOPS TOOLS & CLOUD COMPUTING**: Deploy no Azure App Service
-
----
-
-## 📹 **Vídeo de Apresentação**
-
-- ***
-
-## 🔗 **Links Importantes**
-
-- **Aplicação Online**: https://motovision-api-8077.azurewebsites.net
-- **Swagger UI**: https://motovision-api-8077.azurewebsites.net/swagger-ui.html
-- **Dashboard**: https://motovision-api-8077.azurewebsites.net/dashboard
-- **Login**: https://motovision-api-8077.azurewebsites.net/login
